@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FlowFin | Supplier–Retailer–Bank Portal & AI Credit Scoring</title>
+  <style>
+    /* EY-Parthenon inspired light-blue palette */
+    :root{
+      --bg:#0f1a2b;             /* deep navy */
+      --panel:#17243a;          /* navy panel */
+      --panel2:#132034;         /* darker panel */
+      --text:#eaf2ff;           /* very light blue text */
+      --muted:#a7b6d1;          /* slate-blue */
+      --blue:#3aa7ff;           /* light EY-P blue */
+      --blue2:#7cc3ff;          /* lighter accent */
+      --line:#233654;           /* border */
+      --ok:#f59e0b;             /* amber */
+      --bad:#ef4444;            /* red */
+      --good:#10b981;           /* emerald */
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      color:var(--text);
+      background:linear-gradient(180deg,#0c1626 0%, #0f1a2b 60%, #0c1828 100%);
+    }
+
+    header{
+      position:sticky; top:0; z-index:30;
+      background:rgba(17,36,62,.86); backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .container{max-width:1220px; margin:0 auto; padding:14px 16px}
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.2px}
+    .brandMark{width:18px; height:18px; border-radius:4px; background:linear-gradient(135deg,var(--blue),var(--blue2))}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+    .tab{
+      border:1px solid var(--line); color:var(--muted); background:#10223b;
+      padding:8px 12px; border-radius:999px; cursor:pointer
+    }
+    .tab.active{
+      color:#031324; background:linear-gradient(90deg,var(--blue2),var(--blue));
+      border-color:transparent; font-weight:800
+    }
+
+    main{padding:22px 0}
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,var(--panel) 0%, var(--panel2) 100%);
+      border-radius:18px; padding:20px; box-shadow:0 12px 30px rgba(0,0,0,.25)
+    }
+    h1{font-size:28px; margin:0 0 6px}
+    h2{font-size:22px; margin:18px 0 10px}
+    h3{font-size:16px; margin:12px 0 8px; color:var(--muted)}
+    p{color:#d5e3ff; line-height:1.6}
+    .muted{color:var(--muted)} .small{font-size:12px}
+
+    .grid{display:grid; gap:14px}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media (max-width:980px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+    .flow{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 6px}
+    .node{padding:8px 14px; border-radius:999px; border:1px solid var(--line); background:#10223b}
+    .arrow{width:26px; height:2px; background:var(--muted); position:relative}
+    .arrow::after{content:""; position:absolute; right:-4px; top:-3px; border-left:6px solid var(--muted); border-top:4px solid transparent; border-bottom:4px solid transparent}
+
+    .label{font-size:13px; color:#b9c7de; margin-bottom:6px; display:block}
+    input,select{
+      width:100%; border:1px solid var(--line); background:#0e1e35; color:#e6f0ff;
+      padding:10px 12px; border-radius:10px; outline:none
+    }
+    input::placeholder{color:#7f93b5}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--line); background:#0f2544; color:#e6f8ff;
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:800
+    }
+    .btn.primary{background:linear-gradient(90deg,var(--blue2),var(--blue)); border-color:transparent; color:#061224}
+    .btn.ghost{background:transparent}
+    .btn.success{background:#0d2a20}
+
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); color:#d7e8ff}
+
+    .table{width:100%; border-collapse:collapse; font-size:14px; margin-top:10px}
+    .table th,.table td{border:1px solid var(--line); padding:8px}
+    .right{text-align:right}
+
+    .scoreBox{display:flex; align-items:center; gap:16px; padding:14px; border-radius:12px; border:1px solid var(--line); background:#0f223d; margin-top:10px}
+    .scoreBadge{min-width:88px; text-align:center; font-size:24px; font-weight:900; padding:10px 0; border-radius:10px; background:#0b1a31; border:1px solid #203350}
+    .band{font-weight:900}
+    .ok{color:#f59e0b}.bad{color:#ef4444}.good{color:#10b981}
+
+    .member{display:flex; align-items:center; gap:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background:#0f223d}
+    .avatar{width:44px; height:44px; border-radius:999px; background:linear-gradient(135deg,var(--blue2),var(--blue))}
+    .name{font-weight:900}
+    .role{color:#b9c7de; font-size:13px}
+
+    .status{font-size:12px; color:#a7f3d0; margin-left:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand"><span class="brandMark"></span> FlowFin Portal</div>
+      <div class="tabs">
+        <button class="tab active" data-tab="home">Home</button>
+        <button class="tab" data-tab="how">How it Works</button>
+        <button class="tab" data-tab="factors">Factors</button>
+        <button class="tab" data-tab="supplier">Supplier AI Score</button>
+        <button class="tab" data-tab="retailer">Retailer AI Score</button>
+        <button class="tab" data-tab="integrations">Integrations/APIs</button>
+        <button class="tab" data-tab="team">Team</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HOME -->
+    <section class="card" id="home">
+      <h1>Connect Supplier • Retailer • Bank</h1>
+      <p>
+        FlowFin enables deep-tier financing with AI-driven credit scoring. Suppliers get early liquidity, retailers keep payment terms,
+        and lenders finance validated invoices with risk controls and optional insurance.
+      </p>
+      <h3>Supply-chain finance loop</h3>
+      <div class="flow">
+        <span class="node">Retailer PO</span><span class="arrow"></span>
+        <span class="node">Supplier ships</span><span class="arrow"></span>
+        <span class="node">e-Invoice validated</span><span class="arrow"></span>
+        <span class="node">Bank advances</span><span class="arrow"></span>
+        <span class="node">Retailer settles</span>
+      </div>
+      <p class="small muted">Reverse-factoring: buyer confirmation triggers financing; supplier receives funds T+1; settlement on due date.</p>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="card" id="how" style="display:none; margin-top:14px">
+      <h2>How the Portal Works</h2>
+      <div class="grid grid-2">
+        <div>
+          <h3>Onboard & Verify</h3>
+          <p>KYC, Udyam, GST check; anchor mapping; consented data via Account Aggregator. ERP/e-invoicing hooks move documents securely.</p>
+          <h3>Invoice & Confirm</h3>
+          <p>Supplier uploads e-invoices; buyer validates quantity/quality; duplicate/fraud checks run automatically.</p>
+        </div>
+        <div>
+          <h3>AI Scoring</h3>
+          <p>AI models combine compliance, cash-flow, operational reliability, buyer quality, and sector momentum to produce a 0–100 score that updates with incoming data.</p>
+          <h3>Finance & Settle</h3>
+          <p>Multi-lender bids decide rate/limit; optional insurance; auto-reconciliation on due date; audit trail for all parties.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FACTORS (no weights displayed) -->
+    <section class="card" id="factors" style="display:none; margin-top:14px">
+      <h2>Credit Factors Considered (weights hidden)</h2>
+      <div class="grid grid-2">
+        <div>
+          <ul>
+            <li><b>Business vintage</b> and continuity</li>
+            <li><b>Annual revenue</b> and <b>YoY growth</b></li>
+            <li><b>GST filing consistency</b> and e-invoicing adoption</li>
+            <li><b>Digital transaction share</b> and bank statement health</li>
+            <li><b>Leverage (D/E)</b> and <b>DSCR</b></li>
+            <li><b>Average invoice size</b> and buyer/anchor quality</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li><b>On-time delivery rate</b> and <b>defect/return rate</b></li>
+            <li><b>Receivables days (DSO)</b> and <b>inventory days (DIO)</b></li>
+            <li><b>Cheque bounces</b> and banking discipline</li>
+            <li><b>Anchor confirmation</b> and deep-tier visibility</li>
+            <li><b>Sector momentum</b> and order pipeline</li>
+            <li><b>Policy alignment</b> (AA/OCEN, TReDS, India Stack)</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small muted">These inputs power AI scoring for thin-file MSMEs and retailers while staying compliant with digital public infra.</p>
+    </section>
+
+    <!-- SUPPLIER AI SCORE -->
+    <section class="card" id="supplier" style="display:none; margin-top:14px">
+      <h2>Supplier AI Score — Demo</h2>
+      <p class="muted small">Upload demo data or enter manually. Selecting a known retailer anchor improves validation and pricing in real deployments.</p>
+
+      <!-- Demo uploads -->
+      <div class="grid grid-3">
+        <div>
+          <label class="label">GST Returns (JSON/PDF)</label>
+          <input id="gstUpload" type="file" accept=".json,.pdf" />
+          <button class="btn" id="btnGstDemo">Use Demo GST</button><span id="gstStatus" class="status"></span>
+        </div>
+        <div>
+          <label class="label">Invoice History (CSV/JSON)</label>
+          <input id="invUpload" type="file" accept=".csv,.json" />
+          <button class="btn" id="btnInvDemo">Use Demo Invoices</button><span id="invStatus" class="status"></span>
+        </div>
+        <div>
+          <label class="label">Bank Statements (CSV)</label>
+          <input id="bankUpload" type="file" accept=".csv" />
+          <button class="btn" id="btnBankDemo">Use Demo Bank</button><span id="bankStatus" class="status"></span>
+        </div>
+      </div>
+
+      <!-- Retailer anchor -->
+      <div class="grid grid-3" style="margin-top:10px">
+        <div>
+          <label class="label">Select Retailer (Anchor)</label>
+          <select id="retailerSelect">
+            <option value="dmart">D-Mart (rated)</option>
+            <option value="reliance">Reliance Retail (rated)</option>
+            <option value="trent">Tata Trent (rated)</option>
+            <option value="regional">Regional Chain (unrated)</option>
+            <option value="independent">Independent Stores</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Manual inputs -->
+      <div class="grid grid-3" id="formGridSup" style="margin-top:10px">
+        <div><label class="label">Business Type</label>
+          <select id="s_businessType">
+            <option value="manufacturing">Manufacturing</option>
+            <option value="trading">Trading</option>
+            <option value="services">Services</option>
+          </select>
+        </div>
+        <div><label class="label">Years in Business (0–30)</label><input id="s_years" type="number" min="0" max="30" placeholder="6"></div>
+        <div><label class="label">Annual Revenue (₹ lakh)</label><input id="s_revenue" type="number" min="0" placeholder="250"></div>
+        <div><label class="label">YoY Revenue Growth (%)</label><input id="s_revGrowth" type="number" min="-100" max="300" placeholder="18"></div>
+        <div><label class="label">GST Filed Months (0–12)</label><input id="s_gstMonths" type="number" min="0" max="12" placeholder="12"></div>
+        <div><label class="label">Digital Transaction Share (%)</label><input id="s_digitalShare" type="number" min="0" max="100" placeholder="80"></div>
+        <div><label class="label">Debt-to-Equity (D/E)</label><input id="s_de" type="number" min="0" step="0.01" placeholder="0.8"></div>
+        <div><label class="label">DSCR</label><input id="s_dscr" type="number" min="0" step="0.01" placeholder="1.6"></div>
+        <div><label class="label">Average Invoice Size (₹ lakh)</label><input id="s_avgInvoice" type="number" min="0" step="0.01" placeholder="4"></div>
+        <div><label class="label">On-time Delivery Rate (%)</label><input id="s_otd" type="number" min="0" max="100" placeholder="95"></div>
+        <div><label class="label">Defect/Return Rate (%)</label><input id="s_defect" type="number" min="0" max="100" placeholder="1.5"></div>
+        <div><label class="label">Receivables Days (DSO)</label><input id="s_dso" type="number" min="0" max="365" placeholder="45"></div>
+        <div><label class="label">Inventory Days (DIO)</label><input id="s_dio" type="number" min="0" max="365" placeholder="35"></div>
+        <div><label class="label">Cheque Bounces (6 mo)</label><input id="s_bounces" type="number" min="0" max="50" placeholder="0"></div>
+        <div><label class="label">E-Invoicing Adoption</label>
+          <select id="s_einv"><option value="yes">Yes (compliant)</option><option value="no">No</option></select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn primary" id="s_calcBtn">Run AI Score</button>
+        <button class="btn" id="s_printBtn">Print / Save PDF</button>
+        <button class="btn ghost" id="s_resetBtn">Reset</button>
+        <span class="pill">AI uses past data & trends (demo)</span>
+      </div>
+
+      <div class="scoreBox" id="s_result" style="display:none">
+        <div class="scoreBadge" id="s_scoreNum">—</div>
+        <div>
+          <div>Supplier AI FlowScore: <span id="s_scoreBand" class="band">—</span></div>
+          <div class="small muted" id="s_scoreNote"></div>
+        </div>
+      </div>
+
+      <div id="s_breakdown" style="display:none; margin-top:12px">
+        <h3>Factor Breakdown</h3>
+        <table class="table">
+          <thead><tr><th>Factor</th><th class="right">Sub-Score</th><th class="right">Weight</th><th class="right">Weighted</th></tr></thead>
+        <tbody id="s_breakRows"></tbody>
+        <tfoot><tr><th colspan="3" class="right">Total</th><th class="right" id="s_totalWeighted">0.0</th></tr></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- RETAILER AI SCORE -->
+    <section class="card" id="retailer" style="display:none; margin-top:14px">
+      <h2>Retailer AI Score — Demo</h2>
+      <p class="muted small">Retailer health impacts supplier risk. Upload demo data or enter values; the AI score reflects payment discipline, scale, and stability.</p>
+
+      <div class="grid grid-3">
+        <div>
+          <label class="label">Upload Payables Aging (CSV)</label>
+          <input id="r_agingUpload" type="file" accept=".csv" />
+          <button class="btn" id="r_btnAgingDemo">Use Demo Aging</button><span id="r_agingStatus" class="status"></span>
+        </div>
+        <div>
+          <label class="label">Upload P&L Summary (PDF/JSON)</label>
+          <input id="r_plUpload" type="file" accept=".pdf,.json" />
+          <button class="btn" id="r_btnPlDemo">Use Demo P&L</button><span id="r_plStatus" class="status"></span>
+        </div>
+        <div>
+          <label class="label">Upload GST Filing (JSON/PDF)</label>
+          <input id="r_gstUpload" type="file" accept=".json,.pdf" />
+          <button class="btn" id="r_btnGstDemo">Use Demo GST</button><span id="r_gstStatus" class="status"></span>
+        </div>
+      </div>
+
+      <div class="grid grid-3" id="formGridRet" style="margin-top:10px">
+        <div><label class="label">Retailer Type</label>
+          <select id="r_type">
+            <option value="large_chain">Large Chain</option>
+            <option value="regional_chain">Regional Chain</option>
+            <option value="independent">Independent</option>
+          </select>
+        </div>
+        <div><label class="label">Store Count</label><input id="r_stores" type="number" min="1" placeholder="250"></div>
+        <div><label class="label">Annual Revenue (₹ Cr)</label><input id="r_revenueCr" type="number" min="0" step="0.1" placeholder="1200"></div>
+        <div><label class="label">YoY Revenue Growth (%)</label><input id="r_growth" type="number" min="-100" max="200" placeholder="12"></div>
+        <div><label class="label">On-time Payment %</label><input id="r_otp" type="number" min="0" max="100" placeholder="93"></div>
+        <div><label class="label">Average Credit Days</label><input id="r_creditDays" type="number" min="0" max="180" placeholder="45"></div>
+        <div><label class="label">Dispute Rate (%)</label><input id="r_dispute" type="number" min="0" max="100" placeholder="1.0"></div>
+        <div><label class="label">GST Filed Months (0–12)</label><input id="r_gstMonths" type="number" min="0" max="12" placeholder="12"></div>
+        <div><label class="label">Bank Rating Proxy (1–5)</label><input id="r_bankRate" type="number" min="1" max="5" step="0.1" placeholder="4.2"></div>
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn primary" id="r_calcBtn">Run AI Score</button>
+        <button class="btn" id="r_printBtn">Print / Save PDF</button>
+        <button class="btn ghost" id="r_resetBtn">Reset</button>
+        <span class="pill">AI uses past data & trends (demo)</span>
+      </div>
+
+      <div class="scoreBox" id="r_result" style="display:none">
+        <div class="scoreBadge" id="r_scoreNum">—</div>
+        <div>
+          <div>Retailer AI FlowScore: <span id="r_scoreBand" class="band">—</span></div>
+          <div class="small muted" id="r_scoreNote"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTEGRATIONS / APIS -->
+    <section class="card" id="integrations" style="display:none; margin-top:14px">
+      <h2>Integrations & APIs (demo)</h2>
+      <div class="grid grid-3">
+        <div>
+          <button class="btn" id="apiERP">Connect ERP API</button><span id="apiERPStatus" class="status"></span>
+          <p class="small muted">Secure pull of POs, GRNs, and e-invoices.</p>
+        </div>
+        <div>
+          <button class="btn" id="apiGSTN">Connect GSTN Sandbox</button><span id="apiGSTNStatus" class="status"></span>
+          <p class="small muted">Returns, e-invoice validations, e-way bills.</p>
+        </div>
+        <div>
+          <button class="btn" id="apiAA">Connect AA / TReDS</button><span id="apiAAStatus" class="status"></span>
+          <p class="small muted">Consent-based banking data and marketplace.</p>
+        </div>
+      </div>
+      <p class="small muted">Buttons are simulated; in production they would initiate OAuth/consents and show live status.</p>
+    </section>
+
+    <!-- TEAM -->
+    <section class="card" id="team" style="display:none; margin-top:14px">
+      <h2>Team</h2>
+      <div class="grid grid-3">
+        <div class="member">
+          <div class="avatar"></div>
+          <div>
+            <div class="name">Ravinder Singh</div>
+            <div class="role">IIM Lucknow — Co-founder</div>
+          </div>
+        </div>
+        <div class="member">
+          <div class="avatar"></div>
+          <div>
+            <div class="name">Riya Raj</div>
+            <div class="role">IIM Lucknow — Co-founder</div>
+          </div>
+        </div>
+        <div class="member">
+          <div class="avatar"></div>
+          <div>
+            <div class="name">Vivek Patel</div>
+            <div class="role">IIM Lucknow — Co-founder</div>
+          </div>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:10px">Cross-functional founders combining product, credit, and GTM for deep-tier MSME finance.</p>
+    </section>
+
+    <footer class="muted small" style="margin-top:14px">© FlowFin demo. Static portal for educational purposes.</footer>
+  </main>
+
+  <script>
+    /* ---------- Tabs ---------- */
+    const tabs = document.querySelectorAll('.tab');
+    const sections = {
+      home:document.getElementById('home'),
+      how:document.getElementById('how'),
+      factors:document.getElementById('factors'),
+      supplier:document.getElementById('supplier'),
+      retailer:document.getElementById('retailer'),
+      integrations:document.getElementById('integrations'),
+      team:document.getElementById('team')
+    };
+    tabs.forEach(t=>t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active');
+      const id = t.dataset.tab;
+      Object.entries(sections).forEach(([k,el])=> el.style.display = (k===id)?'':'none');
+    }));
+
+    /* ---------- Supplier scoring weights (hidden in UI) ---------- */
+    const S_WEIGHTS = [
+      {key:'vintage', label:'Business Vintage', weight:9},
+      {key:'revenue', label:'Annual Revenue', weight:8},
+      {key:'growth',  label:'YoY Revenue Growth', weight:7},
+      {key:'gst',     label:'GST Filing Consistency', weight:7},
+      {key:'digital', label:'Digital Share', weight:5},
+      {key:'de',      label:'D/E (lower better)', weight:8},
+      {key:'dscr',    label:'DSCR (higher better)', weight:10},
+      {key:'invoice', label:'Avg Invoice Size', weight:4},
+      {key:'otd',     label:'On-time Delivery', weight:8},
+      {key:'defect',  label:'Defect Rate (lower better)', weight:4},
+      {key:'dso',     label:'Receivables Days (lower better)', weight:6},
+      {key:'dio',     label:'Inventory Days (lower better)', weight:4},
+      {key:'bounces', label:'Cheque Bounces (lower better)', weight:6},
+      {key:'anchor',  label:'Anchor Present', weight:6},
+      {key:'einv',    label:'E-Invoicing', weight:2}
+    ];
+
+    /* ---------- Retailer scoring weights (hidden in UI) ---------- */
+    const R_WEIGHTS = [
+      {key:'scale',   label:'Scale (stores & revenue)', weight:18},
+      {key:'growth',  label:'YoY Growth', weight:10},
+      {key:'payDisc', label:'On-time Payment %', weight:18},
+      {key:'credit',  label:'Average Credit Days (lower better)', weight:10},
+      {key:'dispute', label:'Dispute Rate (lower better)', weight:10},
+      {key:'gst',     label:'GST Consistency', weight:12},
+      {key:'bank',    label:'Bank Rating Proxy', weight:12},
+      {key:'type',    label:'Retailer Type Quality', weight:10}
+    ];
+
+    /* ---------- Helpers ---------- */
+    const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+    const invLinear=(v,min,max)=> isNaN(v)?0 : v<=min?100 : v>=max?0 : (max-v)*100/(max-min);
+    const linear=(v,min,max)=>   isNaN(v)?0 : v<=min?0   : v>=max?100: (v-min)*100/(max-min);
+    const yesNo = v=> v==='yes'?100:0;
+
+    function retailerAnchorBoost(val){
+      // Simple mapping for anchor strength
+      if(val==='dmart' || val==='reliance' || val==='trent') return 100;
+      if(val==='regional') return 60;
+      return 30;
+    }
+
+    /* ---------- Demo upload buttons (simulate success) ---------- */
+    function setStatus(id,msg){ const el=document.getElementById(id); el.textContent='• '+msg; }
+    document.getElementById('btnGstDemo').onclick=()=>setStatus('gstStatus','GST demo data attached');
+    document.getElementById('btnInvDemo').onclick=()=>setStatus('invStatus','Invoice demo data attached');
+    document.getElementById('btnBankDemo').onclick=()=>setStatus('bankStatus','Bank demo data attached');
+    document.getElementById('r_btnAgingDemo').onclick=()=>setStatus('r_agingStatus','Aging demo data attached');
+    document.getElementById('r_btnPlDemo').onclick=()=>setStatus('r_plStatus','P&L demo data attached');
+    document.getElementById('r_btnGstDemo').onclick=()=>setStatus('r_gstStatus','GST demo data attached');
+
+    document.getElementById('apiERP').onclick=()=>setStatus('apiERPStatus','ERP API connected (demo)');
+    document.getElementById('apiGSTN').onclick=()=>setStatus('apiGSTNStatus','GSTN sandbox connected (demo)');
+    document.getElementById('apiAA').onclick=()=>setStatus('apiAAStatus','AA/TReDS connected (demo)');
+
+    /* ---------- Supplier: read inputs ---------- */
+    function getSupplierInputs(){
+      return {
+        businessType: document.getElementById('s_businessType').value,
+        years: parseFloat(document.getElementById('s_years').value),
+        revenue: parseFloat(document.getElementById('s_revenue').value),         // ₹ lakh
+        revGrowth: parseFloat(document.getElementById('s_revGrowth').value),     // %
+        gstMonths: parseFloat(document.getElementById('s_gstMonths').value),     // 0–12
+        digitalShare: parseFloat(document.getElementById('s_digitalShare').value), // %
+        de: parseFloat(document.getElementById('s_de').value),
+        dscr: parseFloat(document.getElementById('s_dscr').value),
+        avgInvoice: parseFloat(document.getElementById('s_avgInvoice').value),   // ₹ lakh
+        otd: parseFloat(document.getElementById('s_otd').value),                 // %
+        defect: parseFloat(document.getElementById('s_defect').value),           // %
+        dso: parseFloat(document.getElementById('s_dso').value),                 // days
+        dio: parseFloat(document.getElementById('s_dio').value),                 // days
+        bounces: parseFloat(document.getElementById('s_bounces').value),
+        anchor: retailerAnchorBoost(document.getElementById('retailerSelect').value),
+        einv: document.getElementById('s_einv').value === 'yes' ? 100 : 0
+      };
+    }
+
+    /* ---------- Supplier AI score ---------- */
+    function scoreSupplier(inp){
+      const sub = {
+        vintage: linear(inp.years, 0, 15),
+        revenue: linear(inp.revenue, 0, 2000),
+        growth:  linear(inp.revGrowth, -20, 60),
+        gst:     linear(inp.gstMonths, 0, 12),
+        digital: linear(inp.digitalShare, 0, 100),
+        de:      invLinear(inp.de, 0, 3),
+        dscr:    linear(inp.dscr, 0.9, 2.5),
+        invoice: linear(inp.avgInvoice, 0, 50),
+        otd:     linear(inp.otd, 60, 99),
+        defect:  invLinear(inp.defect, 0, 10),
+        dso:     invLinear(inp.dso, 0, 120),
+        dio:     invLinear(inp.dio, 0, 120),
+        bounces: invLinear(inp.bounces, 0, 6),
+        anchor:  inp.anchor,
+        einv:    inp.einv
+      };
+
+      let typeAdj = 0; if(inp.businessType==='manufacturing') typeAdj=1.5; if(inp.businessType==='services') typeAdj=0.5;
+      let complianceAdj = 0; if(sub.gst>=95 && sub.einv===100) complianceAdj += 1; if(sub.gst<40 || sub.bounces<40) complianceAdj -= 1;
+
+      let total = 0, rows=[];
+      S_WEIGHTS.forEach(w=>{
+        const s = clamp(sub[w.key]||0, 0, 100);
+        const weighted = s*(w.weight/100);
+        total += weighted; rows.push({label:w.label, s, w:w.weight, weighted});
+      });
+      total = clamp(total + typeAdj + complianceAdj, 0, 100);
+
+      let band='B', note='Balanced supplier profile; finance with standard terms.', cls='ok';
+      if(total>=85){ band='A'; note='Strong, compliant, anchor-validated; eligible for faster disbursal and sharper pricing.'; cls='good'; }
+      else if(total<60){ band='C'; note='Weak profile; consider lower limits, insurance, or anchor guarantees.'; cls='bad'; }
+
+      return { total:Number(total.toFixed(1)), rows, band, note, cls };
+    }
+
+    /* ---------- Retailer: read inputs ---------- */
+    function getRetailerInputs(){
+      return {
+        type: document.getElementById('r_type').value,
+        stores: parseFloat(document.getElementById('r_stores').value),
+        revenueCr: parseFloat(document.getElementById('r_revenueCr').value),
+        growth: parseFloat(document.getElementById('r_growth').value),
+        otp: parseFloat(document.getElementById('r_otp').value),
+        creditDays: parseFloat(document.getElementById('r_creditDays').value),
+        dispute: parseFloat(document.getElementById('r_dispute').value),
+        gstMonths: parseFloat(document.getElementById('r_gstMonths').value),
+        bank: parseFloat(document.getElementById('r_bankRate').value)
+      };
+    }
+
+    /* ---------- Retailer AI score ---------- */
+    function scoreRetailer(inp){
+      const sub = {
+        scale:   clamp((linear(inp.stores, 10, 1000)*0.4 + linear(inp.revenueCr, 10, 5000)*0.6), 0, 100),
+        growth:  linear(inp.growth, -20, 40),
+        payDisc: linear(inp.otp, 70, 99),
+        credit:  invLinear(inp.creditDays, 0, 120),
+        dispute: invLinear(inp.dispute, 0, 10),
+        gst:     linear(inp.gstMonths, 0, 12),
+        bank:    linear(inp.bank, 2, 5),
+        type:    (inp.type==='large_chain'?100: inp.type==='regional_chain'?70:40)
+      };
+
+      let total = 0;
+      R_WEIGHTS.forEach(w=> total += clamp(sub[w.key],0,100)*(w.weight/100));
+      total = clamp(total, 0, 100);
+
+      let band='B', note='Stable buyer; standard credit terms recommended.', cls='ok';
+      if(total>=85){ band='A'; note='Strong buyer with reliable payments; supports better supplier pricing.'; cls='good'; }
+      else if(total<60){ band='C'; note='Weak buyer discipline; shorten credit days and seek guarantees.'; cls='bad'; }
+
+      return { total:Number(total.toFixed(1)), band, note, cls };
+    }
+
+    /* ---------- Wire Supplier UI ---------- */
+    const s_calcBtn=document.getElementById('s_calcBtn');
+    const s_printBtn=document.getElementById('s_printBtn');
+    const s_resetBtn=document.getElementById('s_resetBtn');
+    const s_result=document.getElementById('s_result');
+    const s_scoreNum=document.getElementById('s_scoreNum');
+    const s_scoreBand=document.getElementById('s_scoreBand');
+    const s_scoreNote=document.getElementById('s_scoreNote');
+    const s_break=document.getElementById('s_breakdown');
+    const s_breakRows=document.getElementById('s_breakRows');
+    const s_totalWeighted=document.getElementById('s_totalWeighted');
+
+    s_calcBtn.addEventListener('click', ()=>{
+      const out = scoreSupplier(getSupplierInputs());
+      s_result.style.display=''; s_scoreNum.textContent=out.total;
+      s_scoreBand.textContent=`Band ${out.band}`; s_scoreBand.className=`band ${out.cls}`;
+      s_scoreNote.textContent=out.note;
+
+      s_break.style.display=''; s_breakRows.innerHTML='';
+      out.rows.forEach(r=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML = `<td>${r.label}</td><td class="right">${r.s.toFixed(1)}</td><td class="right">${r.w}%</td><td class="right">${r.weighted.toFixed(1)}</td>`;
+        s_breakRows.appendChild(tr);
+      });
+      s_totalWeighted.textContent=out.total.toFixed(1);
+      window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+    });
+    s_printBtn.addEventListener('click', ()=>window.print());
+    s_resetBtn.addEventListener('click', ()=>{
+      document.querySelectorAll('#formGridSup input').forEach(i=>i.value='');
+      document.getElementById('s_businessType').value='manufacturing';
+      document.getElementById('s_einv').value='yes';
+      document.getElementById('retailerSelect').value='dmart';
+      s_result.style.display='none'; s_break.style.display='none';
+      s_breakRows.innerHTML=''; s_totalWeighted.textContent='0.0'; s_scoreBand.className='band';
+      ['gstStatus','invStatus','bankStatus'].forEach(id=>{const el=document.getElementById(id); if(el) el.textContent='';});
+    });
+
+    /* ---------- Wire Retailer UI ---------- */
+    const r_calcBtn=document.getElementById('r_calcBtn');
+    const r_printBtn=document.getElementById('r_printBtn');
+    const r_resetBtn=document.getElementById('r_resetBtn');
+    const r_result=document.getElementById('r_result');
+    const r_scoreNum=document.getElementById('r_scoreNum');
+    const r_scoreBand=document.getElementById('r_scoreBand');
+    const r_scoreNote=document.getElementById('r_scoreNote');
+
+    r_calcBtn.addEventListener('click', ()=>{
+      const out = scoreRetailer(getRetailerInputs());
+      r_result.style.display=''; r_scoreNum.textContent=out.total;
+      r_scoreBand.textContent=`Band ${out.band}`; r_scoreBand.className=`band ${out.cls}`;
+      r_scoreNote.textContent=out.note;
+      window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+    });
+    r_printBtn.addEventListener('click', ()=>window.print());
+    r_resetBtn.addEventListener('click', ()=>{
+      document.querySelectorAll('#formGridRet input').forEach(i=>i.value='');
+      document.getElementById('r_type').value='large_chain';
+      r_result.style.display='none'; r_scoreBand.className='band';
+      ['r_agingStatus','r_plStatus','r_gstStatus'].forEach(id=>{const el=document.getElementById(id); if(el) el.textContent='';});
+    });
+  </script>
+</body>
+</html>
