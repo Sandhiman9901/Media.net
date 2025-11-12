@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AdPilot • AI Campaign Builder for SMBs</title>
   <style>
-    /* Media.net-like light palette */
+    /* Clean, friendly palette (media.net inspired) */
     :root{
       --bg:#f6f8fb;
       --card:#ffffff;
       --muted:#6b7280;
       --text:#0b1220;
-      --teal:#0aa89e;
-      --teal-600:#078f85;
+      --accent:#0aa89e;
+      --accent-600:#078f85;
       --line:#e6eef2;
       --success:#10b981;
       --danger:#ef4444;
@@ -31,27 +31,30 @@
     /* Header */
     header{
       position:sticky; top:0; z-index:60;
-      background:rgba(255,255,255,0.95); backdrop-filter:blur(6px);
+      background:rgba(255,255,255,0.96); backdrop-filter:blur(6px);
       border-bottom:1px solid var(--line);
     }
     .container{max-width:1180px; margin:0 auto; padding:14px 20px}
     .nav{display:flex; align-items:center; justify-content:space-between; gap:12px}
-    .brand{display:flex; align-items:center; gap:12px; font-weight:700; color:var(--text)}
+    .brandBlock{display:flex; align-items:center; gap:12px}
     .brandMark{
-      width:36px; height:36px; border-radius:8px;
-      background:linear-gradient(135deg,var(--teal),var(--teal-600));
-      display:inline-block; box-shadow:0 6px 18px rgba(10,168,158,0.14);
+      width:44px; height:44px; border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-600));
+      display:inline-block; box-shadow:0 8px 26px rgba(10,168,158,0.12);
     }
-    .brandTitle{font-size:18px}
-    .tabs{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .tab{
-      padding:8px 12px; border-radius:10px; color:var(--muted); cursor:pointer; font-size:14px;
-      border:1px solid transparent; background:transparent;
+    .brandTitle{
+      display:flex; flex-direction:column; line-height:1;
     }
-    .tab.active{background:linear-gradient(90deg,var(--teal-600),var(--teal)); color:#fff; box-shadow:0 6px 18px rgba(7,149,133,0.12); border-color:transparent}
+    .brandTitle .title{font-weight:800; font-size:18px}
+    .brandTitle .tag{font-size:13px; color:var(--muted); margin-top:4px}
 
-    .authBtn{padding:8px 12px; border-radius:8px; background:transparent; border:1px solid var(--line); cursor:pointer; font-weight:700}
-    .authBtn.primary{background:linear-gradient(90deg,var(--teal),var(--teal-600)); color:#fff; border:none}
+    .centerNav{display:flex; gap:18px; align-items:center}
+    .navLink{font-size:15px; color:var(--muted); text-decoration:none; padding:8px 10px; border-radius:8px}
+    .navLink:hover{color:var(--text); background:#fff}
+
+    .rightActions{display:flex; gap:10px; align-items:center}
+    .linkPlain{background:transparent; border:none; color:var(--accent-600); font-weight:700; cursor:pointer}
+    .btnPrimary{background:linear-gradient(90deg,var(--accent),var(--accent-600)); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer}
 
     main{padding:18px 0}
     .card{
@@ -59,9 +62,9 @@
       border-radius:12px; padding:18px; box-shadow:0 8px 20px rgba(13,26,30,0.04);
       border:1px solid var(--line);
     }
-    h1{font-size:26px; margin:0 0 6px}
-    h2{font-size:20px; margin:8px 0 12px}
-    h3{font-size:14px; margin:8px 0; color:var(--muted); font-weight:600}
+    h1{font-size:36px; margin:0 0 10px}
+    h2{font-size:22px; margin:8px 0 12px}
+    h3{font-size:16px; margin:8px 0; color:var(--muted); font-weight:700}
     p{color:var(--muted); margin:0 0 10px; line-height:1.5}
 
     .grid{display:grid; gap:14px}
@@ -71,9 +74,8 @@
 
     /* Dolly-zoom hero */
     .hero{
-      height:360px; border-radius:12px; overflow:hidden; position:relative; display:flex; align-items:center;
-      border:1px solid var(--line);
-      margin-bottom:12px;
+      height:420px; border-radius:12px; overflow:hidden; position:relative; display:flex; align-items:center;
+      border:1px solid var(--line); margin-bottom:18px;
     }
     .hero .slide{
       position:absolute; inset:0; background-size:cover; background-position:center;
@@ -82,16 +84,15 @@
       opacity:0;
     }
     .hero .overlay{
-      position:relative; z-index:6; width:100%; padding:28px; color:#fff; text-shadow:0 6px 20px rgba(0,0,0,0.35);
-      display:flex; flex-direction:column; gap:8px;
+      position:relative; z-index:6; width:100%; padding:28px; color:#fff; text-shadow:0 8px 30px rgba(0,0,0,0.35);
+      display:flex; flex-direction:column; gap:10px; max-width:760px;
     }
-    .hero h1{color:#fff}
-    .hero p{color:rgba(255,255,255,0.92)}
+    .hero .sub{font-size:18px; font-weight:600; color:#fff}
+    .hero p{color:rgba(255,255,255,0.95); font-size:16px}
 
-    /* staggered slides */
-    .slide.s1{animation-delay:0s; background-image:url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=9d9878f0a9e5a765e49b0a6f8da1b3a2');}
-    .slide.s2{animation-delay:6s; background-image:url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=a0b6cd13edec1c8d604deec43e6ccf62');}
-    .slide.s3{animation-delay:12s; background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=96d4b2b7b2a6b6e7b2e5b1b0f3d3a443');}
+    .slide.s1{animation-delay:0s; background-image:url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop&s=9d9878f0a9e5a765e49b0a6f8da1b3a2');}
+    .slide.s2{animation-delay:6s; background-image:url('https://images.unsplash.com/photo-1521335629791-ce4aec67dd48?q=80&w=1600&auto=format&fit=crop&s=48a4f3c6ad2f7b1f4fc6b6f1e2a1c5a4');}
+    .slide.s3{animation-delay:12s; background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1600&auto=format&fit=crop&s=96d4b2b7b2a6b6e7b2e5b1b0f3d3a443');}
 
     @keyframes zoomCycle {
       0% { transform:scale(1); opacity:0; }
@@ -107,19 +108,19 @@
       padding:10px 12px; border-radius:10px; outline:none; font-size:14px;
     }
     .row{display:flex; gap:12px; flex-wrap:wrap}
-    .btn{
-      border:1px solid var(--line); background:#fff; color:var(--text);
-      padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:700;
-    }
-    .btn.primary{background:linear-gradient(90deg,var(--teal),var(--teal-600)); color:#fff; border:none}
     .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:#fbfefc; font-size:13px}
 
-    footer{max-width:1180px; margin:28px auto 0; color:var(--muted); font-size:13px; padding:0 20px}
+    .featureSteps{display:flex; gap:12px; align-items:flex-start; justify-content:space-between; margin-top:18px}
+    .step{flex:1; background:#fff; border:1px solid var(--line); border-radius:10px; padding:18px; text-align:center}
+    .step .num{width:56px;height:56px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--accent),var(--accent-600));color:#fff;font-weight:800;font-size:18px;margin-bottom:12px}
+    .whoCards{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px}
+    @media (max-width:980px){ .featureSteps,.whoCards{grid-template-columns:1fr; display:block} }
 
-    /* simple modal */
+    .finalCTA{margin-top:18px; padding:22px; border-radius:12px; background:linear-gradient(90deg,#f0fdf8,#eefff9); border:1px solid #e0fbf0; text-align:center}
+    .finalCTA h2{margin:0 0 8px}
+    footer{max-width:1180px; margin:28px auto 0; color:var(--muted); font-size:13px; padding:0 20px}
     .modal-backdrop{position:fixed; inset:0; background:rgba(8,12,16,0.4); display:none; align-items:center; justify-content:center; z-index:120}
-    .modal{width:420px; background:#fff; border-radius:10px; padding:18px; box-shadow:0 20px 60px rgba(6,12,24,0.2)}
-    .modal h3{margin:0 0 10px; color:var(--text)}
+    .modal{width:420px; background:#fff; border-radius:10px; padding:18px; box-shadow:0 20px 60px rgba(6,12,24,0.12)}
     .closeX{float:right; cursor:pointer; color:var(--muted); font-weight:800}
     @media (max-width:520px){ .modal{width:92%;}}
   </style>
@@ -127,219 +128,120 @@
 <body>
   <header>
     <div class="container nav">
-      <div style="display:flex;align-items:center;gap:12px">
+      <div class="brandBlock">
         <span class="brandMark" aria-hidden="true"></span>
-        <div class="brand">
-          <div class="brandTitle">AdPilot</div>
-          <div class="muted small" style="margin-top:2px">AI Campaigns for SMBs</div>
+        <div class="brandTitle">
+          <div class="title">AdPilot</div>
+          <div class="tag">Design personalized marketing campaigns</div>
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="tabs" id="navTabs">
-          <button class="tab active" data-tab="home">Business Questionnaire</button>
-          <button class="tab" data-tab="strategy">Personalized Campaign Strategy</button>
-          <button class="tab" data-tab="designer">Campaign Designer</button>
-          <button class="tab" data-tab="launch">Launch</button>
-          <button class="tab" data-tab="insights">Insights</button>
-        </div>
-        <button class="authBtn primary" id="loginBtn">Login / Sign up</button>
+      <div class="centerNav" role="navigation" aria-label="Main navigation">
+        <a class="navLink" href="#featuresSection">Features</a>
+        <a class="navLink" href="#howSection">How It Works</a>
+        <a class="navLink" href="#pricingSection">Pricing</a>
+        <a class="navLink" href="#whoSection">Who It's For</a>
+      </div>
+
+      <div class="rightActions">
+        <button class="linkPlain" id="loginLink">Login</button>
+        <button class="btnPrimary" id="getStartedTop">Get Started Free</button>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <!-- HOME with dolly-zoom hero -->
-    <section class="card" id="home">
+    <!-- HERO -->
+    <section class="card" id="homeHero">
       <div class="hero" aria-hidden="true">
         <div class="slide s1"></div>
         <div class="slide s2"></div>
         <div class="slide s3"></div>
 
-        <div class="overlay">
-          <h1>Create campaigns in under 10 minutes</h1>
-          <p>Answer a few simple questions and AdPilot builds a tailored campaign strategy and ready-to-use creatives — no marketing knowledge required.</p>
-          <div style="margin-top:10px">
-            <button class="btn primary" id="ctaStart">Start Questionnaire</button>
-            <button class="btn" id="learnMore">Learn how</button>
+        <div class="overlay" role="region" aria-label="Hero">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1>Get More Customers. Automatically.</h1>
+            <div class="sub">Stop guessing. Answer simple questions about your business, and our AI builds a custom ad strategy, creates the ads, and finds customers for you. No marketing degree required.</div>
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:10px">
+            <button class="btnPrimary" id="ctaPlan">Get Your AI Ad Plan</button>
+            <button class="linkPlain" id="ctaHow">See How It Works</button>
           </div>
         </div>
       </div>
 
+      <div style="margin-top:16px" id="featuresSection">
+        <div style="display:flex; gap:10px; align-items:center; justify-content:space-between">
+          <h3 style="margin:0">Launch in minutes — built for small businesses</h3>
+          <div class="muted small">Trusted by small businesses & local brands</div>
+        </div>
+
+        <!-- three-step visual (How It Works summary) -->
+        <div id="howSection" class="featureSteps" style="margin-top:18px">
+          <div class="step">
+            <div class="num">1</div>
+            <h3>Tell us your goal</h3>
+            <p class="muted small">A short 5-minute survey captures business type, budget and target customers.</p>
+          </div>
+          <div class="step">
+            <div class="num">2</div>
+            <h3>Get AI strategy & creatives</h3>
+            <p class="muted small">We create platform recommendations, ad copy, images and short videos tailored to your goals.</p>
+          </div>
+          <div class="step">
+            <div class="num">3</div>
+            <h3>Launch & optimize</h3>
+            <p class="muted small">Approve and launch. Our AI suggests optimizations and shows clear results on one dashboard.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHO IT'S FOR -->
+    <section id="whoSection" class="card" style="margin-top:14px">
+      <h2>AI-Powered Advertising for <em>Your</em> Business</h2>
+      <div class="whoCards">
+        <div class="card" style="padding:16px">
+          <h3>For Restaurants & Local Shops</h3>
+          <p class="muted small">Drives local footfall and fills your tables. We run location-based ads and seasonal offers that turn searches into store visits.</p>
+        </div>
+        <div class="card" style="padding:16px">
+          <h3>For E-commerce & D2C Brands</h3>
+          <p class="muted small">Grow online sales with multi-channel campaigns that find ideal buyers and convert them on your website.</p>
+        </div>
+        <div class="card" style="padding:16px">
+          <h3>For Real Estate & Services</h3>
+          <p class="muted small">Get high-value, qualified leads. Our strategies focus on finding clients who are ready to engage your services.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES quick -->
+    <section id="featuresQuick" class="card" style="margin-top:14px">
+      <h2>Features</h2>
       <div class="grid grid-3">
-        <div class="card" style="padding:12px">
-          <h3>Bakery & Local F&B</h3>
-          <p class="muted small">Quick local campaigns to increase footfall and seasonal offers.</p>
-        </div>
-        <div class="card" style="padding:12px">
-          <h3>D2C & Perfumes</h3>
-          <p class="muted small">Multi-channel campaigns for product launches and D2C growth.</p>
-        </div>
-        <div class="card" style="padding:12px">
-          <h3>Real estate & Services</h3>
-          <p class="muted small">Lead-focused strategies for high-value inquiries.</p>
-        </div>
-      </div>
-
-      <div style="margin-top:14px" class="flow" aria-hidden="true">
-        <span class="node">Business Questionnaire</span><span class="arrow"></span>
-        <span class="node">Personalized Campaign Strategy</span><span class="arrow"></span>
-        <span class="node">Campaign Designer</span><span class="arrow"></span>
-        <span class="node">Launch</span><span class="arrow"></span>
-        <span class="node">Insights</span>
-      </div>
-    </section>
-
-    <!-- BUSINESS QUESTIONNAIRE -->
-    <section class="card" id="questionnaire" style="display:none; margin-top:14px">
-      <h2>Business Questionnaire</h2>
-      <p class="muted small">Simple questions — takes less than 2 minutes.</p>
-      <div class="grid grid-2" style="margin-top:10px">
         <div>
-          <label>Business category</label>
-          <select id="biz_category_q">
-            <option value="cafe">Cafe / Bakery</option>
-            <option value="coaching">Coaching / Education</option>
-            <option value="d2c">D2C / Retail</option>
-            <option value="re">Real estate</option>
-            <option value="services">Local Services</option>
-          </select>
+          <h3>Fast Q&A</h3>
+          <p class="muted small">Translate your answers into a campaign blueprint without marketing jargon.</p>
         </div>
         <div>
-          <label>Campaign goal</label>
-          <select id="camp_goal_q">
-            <option value="awareness">Get noticed</option>
-            <option value="footfall">Drive visits</option>
-            <option value="leads">Collect enquiries</option>
-            <option value="sales">Boost sales</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="margin-top:12px" class="grid grid-2">
-        <div>
-          <label>Target location</label>
-          <input id="camp_location_q" placeholder="City or PIN (e.g., Pune / 411001)" />
+          <h3>AI Strategy Builder</h3>
+          <p class="muted small">Recommended platforms, targeting and budget split for your goal.</p>
         </div>
         <div>
-          <label>Budget range</label>
-          <select id="camp_budget_q">
-            <option value="5k">₹5k–15k</option>
-            <option value="15k">₹15k–50k</option>
-            <option value="50k">₹50k–2L</option>
-            <option value="2L">₹2L+</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="margin-top:12px" class="row">
-        <button class="btn primary" id="toStrategy">Get Strategy</button>
-        <button class="btn" id="resetQ">Reset</button>
-        <span class="pill">We auto-translate answers to campaign settings</span>
-      </div>
-    </section>
-
-    <!-- STRATEGY -->
-    <section class="card" id="strategy" style="display:none; margin-top:14px">
-      <h2>Personalized Campaign Strategy</h2>
-      <p class="muted small">AI-powered recommendation based on your answers. You can accept or tweak it.</p>
-      <div id="strategyCard2" style="display:none; margin-top:12px" class="card">
-        <h3>Recommended Strategy</h3>
-        <p class="muted small" id="strategyExplain2">—</p>
-        <div style="margin-top:12px" class="grid grid-3">
-          <div>
-            <div class="small muted">Primary platform</div>
-            <div style="font-weight:800; margin-top:6px" id="strategyPlatform2">—</div>
-          </div>
-          <div>
-            <div class="small muted">Budget split</div>
-            <div style="font-weight:800; margin-top:6px" id="strategyBudget2">—</div>
-          </div>
-          <div>
-            <div class="small muted">Suggested format</div>
-            <div style="font-weight:800; margin-top:6px" id="strategyFormat2">—</div>
-          </div>
-        </div>
-        <div style="margin-top:12px">
-          <button class="btn primary" id="openDesigner2">Open Campaign Designer</button>
-          <button class="btn" id="backToQ">Back</button>
+          <h3>1-Click Designer</h3>
+          <p class="muted small">Auto-generated creatives (posts, reels, search ads) ready to launch.</p>
         </div>
       </div>
     </section>
 
-    <!-- DESIGNER -->
-    <section class="card" id="designer" style="display:none; margin-top:14px">
-      <h2>Campaign Designer</h2>
-      <p class="muted small">Auto-generated creatives for posts, reels and search ads. Edit text or images quickly.</p>
-      <div class="grid grid-2" style="margin-top:12px">
-        <div class="card" style="padding:12px">
-          <h3>Preview — Reel (mock)</h3>
-          <div style="height:180px; background:#f1fbf9; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--muted)">
-            Reel preview
-          </div>
-        </div>
-        <div class="card" style="padding:12px">
-          <h3>Ad Copy</h3>
-          <label>Headline</label>
-          <input id="ad_headline" placeholder="Try our seasonal combo — 20% off!" />
-          <label style="margin-top:8px">Description</label>
-          <textarea id="ad_desc" rows="4" placeholder="Short, catchy line for the ad"></textarea>
-        </div>
-      </div>
-      <div style="margin-top:12px" class="row">
-        <button class="btn primary" id="toLaunch">Proceed to Launch</button>
-        <button class="btn" id="saveDesign">Save Draft</button>
-      </div>
-    </section>
-
-    <!-- LAUNCH -->
-    <section class="card" id="launch" style="display:none; margin-top:14px">
-      <h2>Launch</h2>
-      <p class="muted small">Simulate launching the campaign or download the asset package to upload to ad platforms.</p>
-      <div style="margin-top:12px" class="row">
-        <button class="btn primary" id="simulateLaunch">Simulate Launch</button>
-        <button class="btn" id="downloadAssets">Download Assets</button>
-      </div>
-      <div id="launchNote" style="margin-top:12px; display:none" class="card">
-        <strong>Campaign Launched (demo)</strong>
-        <p class="muted small">Your campaign is live in demo mode. Check Insights for sample results.</p>
-      </div>
-    </section>
-
-    <!-- INSIGHTS -->
-    <section class="card" id="insights" style="display:none; margin-top:14px">
-      <h2>Insights</h2>
-      <p class="muted small">Plain-language performance and quick optimization tips.</p>
-      <div style="margin-top:12px" class="grid grid-3">
-        <div class="card" style="padding:12px">
-          <div class="small muted">Impressions</div>
-          <div style="font-weight:800; font-size:20px; margin-top:8px" id="metricImpr">—</div>
-        </div>
-        <div class="card" style="padding:12px">
-          <div class="small muted">Clicks</div>
-          <div style="font-weight:800; font-size:20px; margin-top:8px" id="metricClicks">—</div>
-        </div>
-        <div class="card" style="padding:12px">
-          <div class="small muted">Leads</div>
-          <div style="font-weight:800; font-size:20px; margin-top:8px" id="metricLeads">—</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px" class="card">
-        <h3>What worked (demo)</h3>
-        <ul class="muted">
-          <li id="worked1">—</li>
-          <li id="worked2">—</li>
-        </ul>
-      </div>
-
-      <div style="margin-top:12px" class="card">
-        <h3>Next suggestions</h3>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn" id="suggestA">Increase Reels Budget</button>
-          <button class="btn" id="suggestB">Refresh Creative</button>
-          <button class="btn" id="suggestC">Narrow by PIN</button>
-        </div>
+    <!-- Final CTA -->
+    <section class="finalCTA" style="margin-top:18px">
+      <h2>Stop Wasting Money. Start Getting Customers.</h2>
+      <p class="muted small">See what AdPilot's AI can do for your business — get your free, personalized ad plan now.</p>
+      <div style="margin-top:12px">
+        <button class="btnPrimary" id="finalCTAButton">Get Your AI Ad Plan</button>
       </div>
     </section>
 
@@ -348,7 +250,7 @@
     </footer>
   </main>
 
-  <!-- simple modal -->
+  <!-- Login modal -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal" role="dialog" aria-modal="true">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -360,95 +262,28 @@
       <input id="authInput" placeholder="you@business.com or +91..." />
       <div style="margin-top:10px; text-align:right">
         <button class="btn" id="modalCancel">Cancel</button>
-        <button class="btn primary" id="modalSubmit">Continue</button>
+        <button class="btnPrimary" id="modalSubmit">Continue</button>
       </div>
     </div>
   </div>
 
   <script>
-    /* ---------- Tabs / sections ---------- */
-    const tabs = document.querySelectorAll('.tab');
-    const sections = {
-      home:document.getElementById('home'),
-      questionnaire:document.getElementById('questionnaire'),
-      strategy:document.getElementById('strategy'),
-      designer:document.getElementById('designer'),
-      launch:document.getElementById('launch'),
-      insights:document.getElementById('insights')
-    };
-    function showSection(id){
-      Object.entries(sections).forEach(([k,el])=>{
-        el.style.display = (k===id)?'':'none';
+    // Simple nav anchors behavior
+    document.querySelectorAll('.navLink').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        if(!href) return;
+        const el = document.querySelector(href);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
       });
-      tabs.forEach(t=> t.classList.toggle('active', t.dataset.tab === id));
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
-    // initial - show questionnaire tab when clicking top nav items
-    tabs.forEach(t=> t.addEventListener('click', ()=> showSection(t.dataset.tab)));
-
-    // map CTA buttons
-    document.getElementById('ctaStart').addEventListener('click', ()=> showSection('questionnaire'));
-    document.getElementById('learnMore').addEventListener('click', ()=> showSection('how')); // how may not exist; keep fallback to home
-    // Questionnaire -> Strategy
-    document.getElementById('toStrategy').addEventListener('click', ()=>{
-      // generate demo strategy from Q inputs
-      const cat = document.getElementById('biz_category_q').value;
-      const goal = document.getElementById('camp_goal_q').value;
-      const budget = document.getElementById('camp_budget_q').value;
-      const mapping = describeStrategy(cat, goal, budget);
-      document.getElementById('strategyExplain2').textContent = mapping.explain;
-      document.getElementById('strategyPlatform2').textContent = mapping.platform;
-      document.getElementById('strategyBudget2').textContent = mapping.split;
-      document.getElementById('strategyFormat2').textContent = mapping.format;
-      document.getElementById('strategyCard2').style.display = 'block';
-      showSection('strategy');
-    });
-    document.getElementById('resetQ').addEventListener('click', ()=> {
-      document.getElementById('biz_category_q').value='cafe';
-      document.getElementById('camp_goal_q').value='awareness';
-      document.getElementById('camp_location_q').value='';
-      document.getElementById('camp_budget_q').value='5k';
     });
 
-    // Strategy -> Designer
-    document.getElementById('openDesigner2').addEventListener('click', ()=> showSection('designer'));
-    document.getElementById('backToQ').addEventListener('click', ()=> showSection('questionnaire'));
-
-    // Designer -> Launch
-    document.getElementById('toLaunch').addEventListener('click', ()=> {
-      showSection('launch');
-      document.getElementById('launchNote').style.display = 'block';
-    });
-
-    // Launch -> Insights (simulate metrics)
-    document.getElementById('simulateLaunch').addEventListener('click', ()=>{
-      showSection('insights');
-      // demo metrics (could be randomized or based on budget)
-      document.getElementById('metricImpr').textContent = '38,400';
-      document.getElementById('metricClicks').textContent = '2,560';
-      document.getElementById('metricLeads').textContent = '420';
-      document.getElementById('worked1').textContent = 'Reels drove most engagement; increase allocation.';
-      document.getElementById('worked2').textContent = 'Search ads delivered high-intent clicks.';
-    });
-
-    document.getElementById('downloadAssets').addEventListener('click', ()=> alert('Download assets (demo).'));
-    document.getElementById('saveDesign').addEventListener('click', ()=> alert('Design saved (demo).'));
-    document.getElementById('exportKit').addEventListener('click', ()=> alert('Download campaign package (demo).'));
-
-    // simple strategy generator (same demo logic)
-    function describeStrategy(cat, goal, budget){
-      let platform='Meta (Instagram)'; let format='Reels & Posts'; let split='70% Meta / 30% Google';
-      if(goal==='leads'){ platform='Google Search + Meta'; format='Search ads + Lead forms'; split='60% Google / 40% Meta'; }
-      if(goal==='sales'){ platform='Meta + Search'; format='Reels + Search ads'; split='50% Meta / 50% Google'; }
-      if(goal==='footfall'){ platform='Meta (Local)'; format='Stories & Offers'; split='80% Meta / 20% WhatsApp'; }
-      if(budget==='5k'){ split = split.replace(/(\d+%)/,'40%'); }
-      if(budget==='2L'){ split = split.replace(/(\d+%)/,'70%'); }
-      return { platform, format, split, explain:`For ${cat} aiming for ${goal}, we recommend ${platform}. Start with ${format} and focus on local targeting.` };
-    }
-
-    /* ---------- Modal Login ---------- */
+    // Login modal wiring
     const modal = document.getElementById('modalBackdrop');
-    document.getElementById('loginBtn').addEventListener('click', ()=> modal.style.display='flex');
+    document.getElementById('loginLink').addEventListener('click', ()=> modal.style.display='flex');
+    document.getElementById('getStartedTop').addEventListener('click', ()=> document.getElementById('ctaPlan').click());
+    document.getElementById('ctaHow').addEventListener('click', ()=> document.querySelector('#howSection .step')?.scrollIntoView({behavior:'smooth'}));
     document.getElementById('closeModal').addEventListener('click', ()=> modal.style.display='none');
     document.getElementById('modalCancel').addEventListener('click', ()=> modal.style.display='none');
     document.getElementById('modalSubmit').addEventListener('click', ()=> {
@@ -457,15 +292,20 @@
       modal.style.display='none';
     });
 
-    // wire suggest buttons
-    document.getElementById('suggestA').addEventListener('click', ()=> alert('Increase Reels budget by 10% (demo)'));
-    document.getElementById('suggestB').addEventListener('click', ()=> alert('Refresh creatives using new templates (demo)'));
-    document.getElementById('suggestC').addEventListener('click', ()=> alert('Narrow audience to PIN codes (demo)'));
+    // CTA buttons lead to the questionnaire flow (if implemented later)
+    document.getElementById('ctaPlan').addEventListener('click', ()=> {
+      // placeholder - show an alert or scroll to questionnaire area if exists
+      alert('Launching the Business Questionnaire (demo).');
+    });
+    document.getElementById('finalCTAButton').addEventListener('click', ()=> document.getElementById('ctaPlan').click());
 
-    // show questionnaire by default when opening
-    // showSection('questionnaire'); // comment out so Home is default; uncomment to land on Q by default
+    // ensure modal closes on backdrop click
+    document.getElementById('modalBackdrop').addEventListener('click', (e)=>{
+      if(e.target === document.getElementById('modalBackdrop')) modal.style.display='none';
+    });
   </script>
 </body>
 </html>
+
 
 
