@@ -76,6 +76,9 @@
   .mt{margin-top:14px}
   .hidden{display:none}
   .mutedSmall{color:var(--muted);font-size:13px}
+
+  /* small toast */
+  .toast{position:fixed;right:20px;bottom:20px;background:#061724;color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 12px 40px rgba(6,12,24,0.25);display:none;z-index:200}
 </style>
 </head>
 <body>
@@ -391,9 +394,9 @@
           <div style="margin-top:12px">
             <div style="display:flex;justify-content:space-between"><div class="mutedSmall">Spent</div><div style="font-weight:800">₹24,600</div></div>
             <div class="budgetBar mt" style="margin-top:8px">
-              <span style="width:60%" class="seg meta"></span>
-              <span style="width:30%" class="seg google"></span>
-              <span style="width:10%" class="seg wa"></span>
+              <span style="width:60%" class="seg meta" id="budgetMeta"></span>
+              <span style="width:30%" class="seg google" id="budgetGoogle"></span>
+              <span style="width:10%" class="seg wa" id="budgetWA"></span>
             </div>
             <div style="margin-top:8px;color:var(--muted)">Tip: Pause low-performing search keywords with low CTR.</div>
           </div>
@@ -414,43 +417,68 @@
       <h3>Optimize Your Campaign</h3>
       <p class="mutedSmall">AI-led optimization that finds problems and suggests fixes so you spend less time tuning and more time winning customers.</p>
 
-      <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
-        <div class="optCard card">
-          <div class="optBadge">01</div>
+      <!-- New behavior-focused UI -->
+      <div style="margin-top:12px; display:flex; flex-direction:column; gap:12px">
+        <!-- Problem header -->
+        <div class="card" style="display:flex;align-items:center;gap:14px">
+          <div style="width:8px;height:48px;background:linear-gradient(180deg,#ffedd5,#ffd8a8);border-radius:6px"></div>
           <div>
-            <div style="font-weight:800">Auto-identifies underperforming campaigns</div>
-            <div class="mutedSmall" style="margin-top:6px">Detects campaigns with low CTR, high CPC, or poor conversion rates and flags them for review.</div>
+            <div style="font-weight:900;color:#b45309">Your stories are not performing as expected</div>
+            <div style="margin-top:6px;color:var(--muted)">Recent story posts have low engagement and CTR compared with other assets — the engine recommends quick fixes below.</div>
           </div>
         </div>
 
-        <div class="optCard card">
-          <div class="optBadge">02</div>
-          <div>
-            <div style="font-weight:800">Suggests fixes (audience/creative/budget)</div>
-            <div class="mutedSmall" style="margin-top:6px">Actionable suggestions such as narrowing audience, swapping creatives, or reallocating budget to higher-performing channels.</div>
+        <!-- Suggestions list -->
+        <div class="card">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="flex:1">
+              <div style="font-weight:800">Reallocate budget</div>
+              <div class="mutedSmall" style="margin-top:6px">Move a portion of story budget to reels and search ads to capture higher engagement and intent.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn ghost" id="suggestBudget">Preview realloc.</button>
+            </div>
           </div>
         </div>
 
-        <div class="optCard card">
-          <div class="optBadge">03</div>
-          <div>
-            <div style="font-weight:800">Improves ROI continuously</div>
-            <div class="mutedSmall" style="margin-top:6px">Optimization loops that learn from results and progressively increase campaign efficiency.</div>
+        <div class="card">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="flex:1">
+              <div style="font-weight:800">Change posting schedule</div>
+              <div class="mutedSmall" style="margin-top:6px">Shift story posts to the platform-recommended peak hours and spread posts evenly across the week to avoid fatigue.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn ghost" id="suggestSchedule">Preview schedule</button>
+            </div>
           </div>
         </div>
 
-        <div class="optCard card">
-          <div class="optBadge">04</div>
-          <div>
-            <div style="font-weight:800">Low effort — AI-led optimization</div>
-            <div class="mutedSmall" style="margin-top:6px">Apply suggestions with one click and monitor changes over time.</div>
+        <div class="card">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="flex:1">
+              <div style="font-weight:800">Swap creative</div>
+              <div class="mutedSmall" style="margin-top:6px">Replace low-performing story creatives with short reels or carousel posts that show product benefits and clear CTAs.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn ghost" id="suggestCreative">Preview creative</button>
+            </div>
           </div>
         </div>
+
+        <!-- Apply -->
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn primary" id="applyOptimization">Apply optimization (1-click)</button>
+          <button class="btn ghost" id="dismissOptimization">Keep current</button>
+        </div>
+
+        <div class="mutedSmall">Note: These are AI-suggested changes — you can preview adjustments before applying. Applying will simulate changes in the dashboard (demo).</div>
       </div>
     </section>
 
     <footer class="mt">© AdPilot demo — prototype (mock data)</footer>
   </div>
+
+  <div class="toast" id="toastEl">Optimization applied ✓</div>
 
 <script>
   // hero CTA -> Questionnaire
@@ -540,11 +568,79 @@
     document.getElementById('bizBudget').value='5000'; document.getElementById('bizLocation').value=''; document.getElementById('previewText').textContent='Fill the form to see a tailored plan.';
   });
 
+  // OPTIMIZATION interactions (only logic added here)
+  const toast = document.getElementById('toastEl');
+  function showToast(msg){
+    toast.textContent = msg; toast.style.display = 'block';
+    setTimeout(()=> toast.style.display = 'none', 1800);
+  }
+
+  // Preview actions (no destructive changes)
+  document.getElementById('suggestBudget').addEventListener('click', ()=>{
+    // preview: show a quick modal-like alert and visually adjust budget bar slightly (demo)
+    const metaEl = document.getElementById('budgetMeta');
+    const googleEl = document.getElementById('budgetGoogle');
+    const waEl = document.getElementById('budgetWA');
+    // small preview: shift 10% from meta -> google
+    metaEl.style.width = (parseInt(metaEl.style.width)||60) - 10 + '%';
+    googleEl.style.width = (parseInt(googleEl.style.width)||30) + 8 + '%';
+    waEl.style.width = (100 - (parseInt(metaEl.style.width)||50) - (parseInt(googleEl.style.width)||38)) + '%';
+    showToast('Previewed budget reallocation (demo)');
+  });
+
+  document.getElementById('suggestSchedule').addEventListener('click', ()=>{
+    // preview schedule change: scroll scheduler into view and flash it
+    const sched = document.getElementById('schedulerSection');
+    sched.scrollIntoView({behavior:'smooth'});
+    sched.style.boxShadow = '0 12px 40px rgba(3,102,89,0.08)';
+    setTimeout(()=> sched.style.boxShadow = '', 1200);
+    showToast('Previewed schedule recommendations');
+  });
+
+  document.getElementById('suggestCreative').addEventListener('click', ()=>{
+    // preview: open campaign designer preview
+    document.getElementById('videoDesignerSection').classList.remove('hidden');
+    document.getElementById('videoDesignerSection').scrollIntoView({behavior:'smooth'});
+    showToast('Previewed creative suggestions');
+  });
+
+  // Apply optimization: performs demo changes to dashboard metrics
+  document.getElementById('applyOptimization').addEventListener('click', ()=>{
+    // Simulate effect: increase clicks and leads, improve CTR
+    const clicksEl = document.getElementById('mClicks');
+    const leadsEl = document.getElementById('mLeads');
+    const imprEl = document.getElementById('mImpr');
+
+    const clicks = parseInt(clicksEl.textContent.replace(/,/g,''),10) || 2560;
+    const leads = parseInt(leadsEl.textContent.replace(/,/g,''),10) || 420;
+    const impr = parseInt(imprEl.textContent.replace(/,/g,''),10) || 38400;
+
+    // mock improvements
+    clicksEl.textContent = (clicks + Math.round(clicks * 0.18)).toLocaleString(); // +18% clicks
+    leadsEl.textContent = (leads + Math.round(leads * 0.22)).toLocaleString(); // +22% leads
+    imprEl.textContent = (impr + Math.round(impr * 0.06)).toLocaleString(); // +6% impressions
+
+    // hint in recent activity
+    const recentList = document.querySelector('#dashboardSection ul');
+    const li = document.createElement('li');
+    li.style.color = 'var(--muted)';
+    li.style.marginTop = '8px';
+    li.innerHTML = 'Optimization applied — reallocated budget and updated creatives — +22% leads <span style="display:block;color:var(--muted);font-size:13px;margin-top:6px">AI reallocated 10% budget to reels and refreshed story creative; monitor performance over the next 48 hours.</span>';
+    recentList.appendChild(li);
+
+    showToast('Optimization applied — monitoring results');
+  });
+
+  document.getElementById('dismissOptimization').addEventListener('click', ()=>{
+    showToast('Left campaign unchanged');
+  });
+
   // ensure sections visibility (scheduler and optimize visible by default)
   document.getElementById('strategySection').classList.add('hidden');
   document.getElementById('videoDesignerSection').classList.add('hidden');
   document.getElementById('videoSection').classList.add('hidden');
-  // schedulerSection and optimizeSection intentionally visible above/below dashboard
+  // schedulerSection visible as required
 </script>
 </body>
 </html>
+
