@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AdPilot • Mockups — Questionnaire • Strategy • Short-Video • Dashboard</title>
+<title>AdPilot • Questionnaire • Strategy • Video • Scheduler • Dashboard</title>
 <style>
   :root{
     --bg:#f6f8fb; --card:#fff; --muted:#6b7280; --text:#0b1220;
     --accent:#0aa89e; --accent-600:#078f85; --line:#e6eef2; --glass:rgba(10,10,10,0.03);
+    --success:#10b981; --danger:#ef4444;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-  .container{max-width:1100px;margin:26px auto;padding:20px}
+  .container{max-width:1180px;margin:26px auto;padding:20px}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent-600));border-radius:10px;box-shadow:0 8px 26px rgba(10,168,158,0.12)}
@@ -22,14 +23,20 @@
   .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:800}
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
   .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-600));color:#fff}
-  .hero{display:flex;gap:18px;align-items:center;background:var(--card);padding:22px;border-radius:12px;border:1px solid var(--line)}
-  .hero-left{flex:1}
-  .hero h2{margin:0 0 8px;font-size:28px}
-  .hero p{margin:0 0 12px;color:var(--muted)}
-  .hero-right{width:320px;display:flex;flex-direction:column;gap:10px}
-  .pill{padding:6px 10px;border-radius:999px;background:var(--glass);font-weight:700;color:var(--muted);display:inline-block}
 
-  /* layout cards */
+  .hero{height:420px;border-radius:12px;overflow:hidden;position:relative;display:flex;align-items:center;background:linear-gradient(180deg,#fff,#fbfffc);padding:18px;border:1px solid var(--line)}
+  .hero .slide{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:center center;will-change:transform,opacity;animation:zoomCycle 18s infinite ease-in-out;opacity:0}
+  .overlay{position:relative;z-index:6;width:100%;padding:28px;color:#fff;text-shadow:0 8px 30px rgba(0,0,0,0.35);display:flex;flex-direction:column;gap:10px;max-width:760px}
+  .overlay h1{font-size:36px;margin:0}
+  .overlay p{margin:0;color:rgba(255,255,255,0.95);font-size:16px}
+  .slide.s1{animation-delay:0s;background-image:url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop&s=9d9878f0a9e5a765e49b0a6f8da1b3a2')}
+  .slide.s2{animation-delay:6s;background-image:url('https://images.unsplash.com/photo-1521335629791-ce4aec67dd48?q=80&w=1600&auto=format&fit=crop&s=48a4f3c6ad2f7b1f4fc6b6f1e2a1c5a4')}
+  .slide.s3{animation-delay:12s;background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1600&auto=format&fit=crop&s=96d4b2b7b2a6b6e7b2e5b1b0f3d3a443')}
+  @keyframes zoomCycle{0%{transform:scale(1);opacity:0}6%{opacity:1;transform:scale(1.04)}28%{opacity:1;transform:scale(1.08)}34%{opacity:0;transform:scale(1.14)}100%{opacity:0;transform:scale(1.14)}}
+  .hero .content{position:relative;z-index:8;display:flex;justify-content:space-between;gap:18px;width:100%}
+  .hero-left{flex:1}
+  .hero-right{width:320px;display:flex;flex-direction:column;gap:10px}
+
   .card{background:var(--card);padding:16px;border-radius:12px;border:1px solid var(--line);box-shadow:0 8px 30px rgba(9,16,20,0.03)}
   .grid{display:grid;gap:14px}
   .cols-2{grid-template-columns:1fr 380px}
@@ -40,34 +47,35 @@
   input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);font-size:14px}
   textarea{min-height:90px;resize:vertical}
   .row{display:flex;gap:10px;align-items:center}
-  .tag{display:inline-block;background:#f1fbf9;color:#066; padding:6px 8px;border-radius:999px;font-weight:700;border:1px solid #e6fbf6}
+  .pill{padding:6px 10px;border-radius:999px;background:var(--glass);font-weight:700;color:var(--muted);display:inline-block}
 
-  /* strategy UI */
   .budgetBar{height:14px;border-radius:8px;background:var(--glass);overflow:hidden;display:flex}
-  .seg{height:100%;display:block}
+  .seg{height:100%}
   .seg.meta{background:linear-gradient(90deg,#6ee7d7,#3dd4bf)}
   .seg.google{background:linear-gradient(90deg,#ffd4a3,#ffb36b)}
   .seg.wa{background:linear-gradient(90deg,#c9f2bb,#8ae07b)}
   .audienceChip{display:inline-flex;gap:8px;padding:8px 10px;border-radius:999px;border:1px solid var(--line);margin-right:8px;margin-bottom:8px;background:#fff}
 
-  /* short video mock */
   .videoPreview{height:220px;border-radius:8px;background:linear-gradient(180deg,#f6fdfc,#eafbf8);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:800;border:1px dashed var(--line)}
 
-  /* dashboard */
   .metric{padding:14px;border-radius:10px;background:#fff;border:1px solid var(--line);text-align:center}
   .metric h4{margin:0;font-size:18px}
   .metric p{margin:6px 0 0;color:var(--muted)}
-  /* tooltip */
   .tt{position:relative;display:inline-block}
-  .tt:hover::after{
-    content:attr(data-tip);
-    position:absolute;white-space:nowrap;background:#0b1220;color:#fff;padding:8px 10px;border-radius:8px;font-size:13px;left:50%;transform:translateX(-50%) translateY(-8px);
-    box-shadow:0 8px 30px rgba(0,0,0,0.18);z-index:30
-  }
+  .tt:hover::after{content:attr(data-tip);position:absolute;white-space:nowrap;background:#0b1220;color:#fff;padding:8px 10px;border-radius:8px;font-size:13px;left:50%;transform:translateX(-50%) translateY(-8px);box-shadow:0 8px 30px rgba(0,0,0,0.18);z-index:30}
+
+  .calendar{height:260px;border-radius:8px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:800;background:#fbfffe}
+  .scheduleList{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+  .scheduleItem{padding:8px;border-radius:8px;border:1px solid var(--line);background:#fff;display:flex;justify-content:space-between;align-items:center}
+
+  .optCard{display:flex;gap:12px;align-items:flex-start}
+  .optBadge{width:48px;height:48px;border-radius:8px;background:linear-gradient(90deg,#f0fff8,#e8fff7);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent-600)}
+  .finalCTA{margin-top:18px;padding:22px;border-radius:12px;background:linear-gradient(90deg,#f0fdf8,#eefff9);border:1px solid #e0fbf0;text-align:center}
 
   footer{margin-top:28px;text-align:center;color:var(--muted);font-size:13px}
   .mt{margin-top:14px}
   .hidden{display:none}
+  .mutedSmall{color:var(--muted);font-size:13px}
 </style>
 </head>
 <body>
@@ -91,38 +99,42 @@
       </nav>
     </header>
 
-    <!-- HERO -->
-    <section class="hero mt card">
-      <div class="hero-left">
-        <h2>Get More Customers. Automatically.</h2>
-        <p>Stop guessing. Answer simple questions about your business and our AI builds a custom ad strategy, creates the ads, and finds customers for you. No marketing degree required.</p>
-        <div style="display:flex;gap:10px;align-items:center">
-          <button class="btn primary" id="ctaStartPlan">Get Your AI Ad Plan</button>
-          <button class="btn ghost" id="ctaSeeHow">See How It Works</button>
-          <span class="pill">Under 10 minutes</span>
-        </div>
-      </div>
+    <!-- HERO / Dolly-zoom -->
+    <section class="hero mt">
+      <div class="slide s1"></div>
+      <div class="slide s2"></div>
+      <div class="slide s3"></div>
 
-      <div class="hero-right">
-        <div class="card" style="padding:12px">
-          <div style="font-size:13px;color:var(--muted);font-weight:700">Why AdPilot</div>
-          <div style="margin-top:10px">
-            <div class="tag">Guided setup</div>
-            <div class="tag" style="margin-left:6px">Auto-creatives</div>
+      <div class="content" style="width:100%;padding:18px">
+        <div class="hero-left">
+          <div class="overlay">
+            <h1>Get More Customers. Automatically.</h1>
+            <p>Stop guessing. Answer simple questions about your business, and our AI builds a custom ad strategy, creates the ads, and finds customers for you. No marketing degree required.</p>
+            <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+              <button class="btn primary" id="ctaGetPlan">Get Your AI Ad Plan</button>
+              <button class="btn ghost" id="ctaSeeHow">See How It Works</button>
+              <span class="pill">Under 10 minutes</span>
+            </div>
           </div>
         </div>
 
-        <div class="card" style="padding:12px">
-          <div style="font-size:13px;color:var(--muted);font-weight:700">Need help?</div>
-          <div style="margin-top:10px;color:var(--muted)">Chat with our demo assistant — or use the mock flow below.</div>
+        <div class="hero-right">
+          <div class="card">
+            <div style="font-weight:900">Trusted outcomes</div>
+            <div class="mutedSmall" style="margin-top:8px">Built for small businesses — low setup, clear results.</div>
+          </div>
+          <div class="card mt">
+            <div style="font-weight:900">Quick tips</div>
+            <div class="mutedSmall" style="margin-top:8px">We recommend starting with a small budget and letting the system optimize after 7–14 days.</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Business Questionnaire mockup -->
+    <!-- Questionnaire section (target of hero CTA) -->
     <section id="questionnaireSection" class="card mt">
-      <h3 style="margin:0 0 8px">Sign up guidance & Business Questionnaire</h3>
-      <p style="margin:0 0 12px;color:var(--muted)">Simple onboarding with minimal inputs. We auto-translate answers into campaign settings — no jargon.</p>
+      <h3>Sign up guidance & Business Questionnaire</h3>
+      <p class="mutedSmall">Simple onboarding with minimal inputs. We auto-translate answers into campaign settings — no jargon.</p>
 
       <div class="grid cols-2 mt">
         <div>
@@ -163,7 +175,6 @@
           </div>
         </div>
 
-        <!-- right column: quick preview / persona -->
         <div>
           <div class="card" style="padding:12px">
             <div style="font-weight:800">Quick preview</div>
@@ -172,18 +183,18 @@
 
           <div class="card mt" style="padding:12px">
             <div style="font-weight:800">Why this matters</div>
-            <p style="color:var(--muted);margin-top:8px">We convert your answers into platform choices, creative format, budget split and a target audience — ready for the next step.</p>
+            <p class="mutedSmall" style="margin-top:8px">We convert your answers into platform choices, creative format, budget split and a target audience — ready for the next step.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- AI Media Strategy Builder mockup -->
+    <!-- Strategy -->
     <section id="strategySection" class="card mt hidden">
-      <h3 style="margin:0 0 8px">AI-Media Strategy Builder</h3>
-      <p style="margin:0 0 12px;color:var(--muted)">Recommended platforms, budget split, and audience mapping to reduce confusion and accelerate launch.</p>
+      <h3>AI-Media Strategy Builder</h3>
+      <p class="mutedSmall">Recommended platforms, budget split, and audience mapping to reduce confusion and accelerate launch.</p>
 
-      <div class="grid cols-2">
+      <div class="grid cols-2 mt">
         <div>
           <div style="font-weight:900">Recommended mix</div>
           <div style="margin-top:12px">
@@ -191,7 +202,7 @@
               <div style="font-weight:700" id="recPlatform">Meta (Instagram)</div>
               <div style="color:var(--muted)" id="recBudgetLabel">₹0</div>
             </div>
-            <div class="budgetBar mt" style="margin-top:10px">
+            <div class="budgetBar mt">
               <span id="segMeta" class="seg meta" style="width:70%"></span>
               <span id="segGoogle" class="seg google" style="width:20%"></span>
               <span id="segWA" class="seg wa" style="width:10%"></span>
@@ -210,7 +221,7 @@
               <div style="font-weight:700;margin-bottom:6px">Target audience</div>
               <div class="card" style="padding:10px">
                 <div style="font-weight:800" id="audienceDemo">Age 18–35, local, interests: food, cafes</div>
-                <div style="color:var(--muted);margin-top:8px">You can accept or tweak this audience before generating creatives.</div>
+                <div class="mutedSmall" style="margin-top:8px">You can accept or tweak this audience before generating creatives.</div>
               </div>
             </div>
 
@@ -224,7 +235,7 @@
         <div>
           <div class="card" style="padding:12px">
             <div style="font-weight:800">Why we chose this mix</div>
-            <p style="color:var(--muted);margin-top:8px" id="whyChoice">High local interest on social + search intent for queries in your category.</p>
+            <p class="mutedSmall" style="margin-top:8px" id="whyChoice">High local interest on social + search intent for queries in your category.</p>
           </div>
 
           <div class="card mt" style="padding:12px">
@@ -236,12 +247,37 @@
       </div>
     </section>
 
-    <!-- Short Video Creator -->
-    <section id="videoSection" class="card mt hidden">
-      <h3 style="margin:0 0 8px">Short Video Creator — Reels / Shorts (Mock)</h3>
-      <p style="margin:0 0 12px;color:var(--muted)">Auto-generate short videos using photos or clips. Use templates and export for IG/FB/YouTube.</p>
+    <!-- Designer -->
+    <section id="videoDesignerSection" class="card mt hidden">
+      <h3>Campaign Designer</h3>
+      <p class="mutedSmall">Auto-generated creatives for posts, reels and search ads. Edit text or images quickly.</p>
+      <div class="grid cols-2 mt">
+        <div class="card" style="padding:12px">
+          <h4 style="margin:0 0 8px">Preview — Reel (mock)</h4>
+          <div style="height:180px;background:#f1fbf9;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)">
+            Reel preview
+          </div>
+        </div>
+        <div class="card" style="padding:12px">
+          <h4 style="margin:0 0 8px">Ad Copy</h4>
+          <label>Headline</label>
+          <input id="ad_headline" placeholder="Try our seasonal combo — 20% off!" />
+          <label style="margin-top:8px">Description</label>
+          <textarea id="ad_desc" rows="4" placeholder="Short, catchy line for the ad"></textarea>
+        </div>
+      </div>
+      <div class="row mt">
+        <button class="btn primary" id="toVideoCreator">Create Short Video</button>
+        <button class="btn ghost" id="saveDesign">Save Draft</button>
+      </div>
+    </section>
 
-      <div class="grid cols-2">
+    <!-- Short Video Creator (removed 'Mock' from heading) -->
+    <section id="videoSection" class="card mt hidden">
+      <h3>Short Video Creator — Reels / Shorts</h3>
+      <p class="mutedSmall">Auto-generate short videos using photos or clips. Use templates and export for IG/FB/YouTube.</p>
+
+      <div class="grid cols-2 mt">
         <div>
           <label>Choose template</label>
           <select id="videoTemplate">
@@ -273,7 +309,47 @@
       </div>
     </section>
 
-    <!-- Track Your Campaign - Dashboard (dummy data) -->
+    <!-- Campaign Scheduler (new section) -->
+    <section id="schedulerSection" class="card mt hidden">
+      <h3>Campaign Scheduler</h3>
+      <p class="mutedSmall">Auto-publish posts across channels, recommend best times, and keep brand presence consistent with a visual calendar.</p>
+
+      <div class="grid cols-2 mt">
+        <div>
+          <div class="calendar">Visual calendar (drag & drop placeholder)</div>
+
+          <div class="scheduleList mt">
+            <div class="scheduleItem"><div><strong>Today 10:00</strong> — Instagram Story (Promo)</div><div class="mutedSmall">Status: Scheduled</div></div>
+            <div class="scheduleItem"><div><strong>Tomorrow 18:00</strong> — Facebook Reel (Offer)</div><div class="mutedSmall">Status: Scheduled</div></div>
+            <div class="scheduleItem"><div><strong>Mon 09:00</strong> — Google Search Ads (Keyword)</div><div class="mutedSmall">Status: Active</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="padding:12px">
+            <div style="font-weight:800">Auto-publishes posts across channels</div>
+            <p class="mutedSmall" style="margin-top:8px">Once scheduled, posts publish automatically at the chosen time to selected platforms.</p>
+          </div>
+
+          <div class="card mt" style="padding:12px">
+            <div style="font-weight:800">Smart timing recommendations</div>
+            <p class="mutedSmall" style="margin-top:8px">We suggest times when your audience is most active for higher engagement.</p>
+          </div>
+
+          <div class="card mt" style="padding:12px">
+            <div style="font-weight:800">Visual calendar interface</div>
+            <p class="mutedSmall" style="margin-top:8px">Drag and drop posts to re-schedule and maintain a consistent pipeline.</p>
+          </div>
+
+          <div class="card mt" style="padding:12px">
+            <div style="font-weight:800">Consistent brand presence</div>
+            <p class="mutedSmall" style="margin-top:8px">Maintain regular posting cadence and reuse templates to keep messaging aligned.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
     <section id="dashboardSection" class="card mt">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
         <div>
@@ -289,15 +365,15 @@
       <div class="grid cols-3 mt">
         <div class="metric">
           <h4 id="mImpr">38,400</h4>
-          <p class="muted">Impressions <span class="tt" data-tip="Total number of times your ads were shown">[?]</span></p>
+          <p class="mutedSmall">Impressions <span class="tt" data-tip="Total times your ad was shown">[?]</span></p>
         </div>
         <div class="metric">
           <h4 id="mClicks">2,560</h4>
-          <p class="muted">Clicks <span class="tt" data-tip="Number of ad clicks received">[?]</span></p>
+          <p class="mutedSmall">Clicks <span class="tt" data-tip="Number of clicks on your ads">[?]</span></p>
         </div>
         <div class="metric">
           <h4 id="mLeads">420</h4>
-          <p class="muted">Leads <span class="tt" data-tip="Leads collected (forms / calls / messages)">[?]</span></p>
+          <p class="mutedSmall">Leads <span class="tt" data-tip="Leads collected from forms, calls or messages">[?]</span></p>
         </div>
       </div>
 
@@ -313,7 +389,7 @@
         <div class="card">
           <div style="font-weight:800">Budget spend</div>
           <div style="margin-top:12px">
-            <div style="display:flex;justify-content:space-between"><div class="muted">Spent</div><div style="font-weight:800">₹24,600</div></div>
+            <div style="display:flex;justify-content:space-between"><div class="mutedSmall">Spent</div><div style="font-weight:800">₹24,600</div></div>
             <div class="budgetBar mt" style="margin-top:8px">
               <span style="width:60%" class="seg meta"></span>
               <span style="width:30%" class="seg google"></span>
@@ -326,10 +402,50 @@
 
       <div class="mt">
         <div style="font-weight:800">Recent activity</div>
-        <ul style="margin:8px 0 0;color:var(--muted)">
-          <li>Creative refreshed (auto) — +12% CTR</li>
-          <li>Audience narrowed to PIN 411001 — +8% lead quality</li>
+        <ul style="margin:8px 0 0">
+          <li style="color:var(--muted)">Creative refreshed (auto) — +12% CTR <span style="display:block;color:var(--muted);font-size:13px;margin-top:6px">AI replaced the low-performing image with a dynamic reel format, improving click-through rate. Consider rolling the new creative to similar audiences.</span></li>
+          <li style="color:var(--muted);margin-top:8px">Audience narrowed to PIN 411001 — +8% lead quality <span style="display:block;color:var(--muted);font-size:13px;margin-top:6px">Refined geo-targeting eliminated non-local traffic, resulting in more qualified enquiries. Consider increasing budget slightly for this PIN for higher ROI.</span></li>
         </ul>
+      </div>
+    </section>
+
+    <!-- Optimize Your Campaign (new) -->
+    <section id="optimizeSection" class="card mt">
+      <h3>Optimize Your Campaign</h3>
+      <p class="mutedSmall">AI-led optimization that finds problems and suggests fixes so you spend less time tuning and more time winning customers.</p>
+
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+        <div class="optCard card">
+          <div class="optBadge">01</div>
+          <div>
+            <div style="font-weight:800">Auto-identifies underperforming campaigns</div>
+            <div class="mutedSmall" style="margin-top:6px">Detects campaigns with low CTR, high CPC, or poor conversion rates and flags them for review.</div>
+          </div>
+        </div>
+
+        <div class="optCard card">
+          <div class="optBadge">02</div>
+          <div>
+            <div style="font-weight:800">Suggests fixes (audience / creative / budget)</div>
+            <div class="mutedSmall" style="margin-top:6px">Actionable suggestions such as narrowing audience, swapping creatives, or reallocating budget to higher-performing channels.</div>
+          </div>
+        </div>
+
+        <div class="optCard card">
+          <div class="optBadge">03</div>
+          <div>
+            <div style="font-weight:800">Low effort — AI-led optimization</div>
+            <div class="mutedSmall" style="margin-top:6px">Apply suggestions with one click and monitor changes over time.</div>
+          </div>
+        </div>
+
+        <div class="optCard card">
+          <div class="optBadge">04</div>
+          <div>
+            <div style="font-weight:800">Improves ROI continuously</div>
+            <div class="mutedSmall" style="margin-top:6px">Optimization loops that learn from results and progressively increase campaign efficiency.</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -337,111 +453,83 @@
   </div>
 
 <script>
-  // Hook CTA to questionnaire
+  // hero CTA -> Questionnaire
+  document.getElementById('ctaGetPlan').addEventListener('click', ()=> document.getElementById('questionnaireSection').scrollIntoView({behavior:'smooth'}));
   document.getElementById('startPlan').addEventListener('click', ()=> document.getElementById('questionnaireSection').scrollIntoView({behavior:'smooth'}));
-  document.getElementById('ctaStartPlan').addEventListener('click', ()=> document.getElementById('questionnaireSection').scrollIntoView({behavior:'smooth'}));
-  document.getElementById('ctaSeeHow').addEventListener('click', ()=> document.getElementById('strategySection').scrollIntoView({behavior:'smooth'}));
-
-  // Reset Questionnaire
-  document.getElementById('btnResetQ').addEventListener('click', ()=>{
-    document.getElementById('bizName').value='';
-    document.getElementById('bizType').value='local';
-    document.getElementById('bizGoal').value='awareness';
-    document.getElementById('bizBudget').value='5000';
-    document.getElementById('bizLocation').value='';
-    document.getElementById('previewText').textContent = 'Fill the form to see a tailored plan.';
+  document.getElementById('ctaSeeHow').addEventListener('click', ()=> {
+    document.getElementById('strategySection').classList.remove('hidden');
+    document.getElementById('strategySection').scrollIntoView({behavior:'smooth'});
   });
 
-  // Generate AI strategy (mock)
+  // Questionnaire -> Strategy (demo logic)
   document.getElementById('btnGenerateStrategy').addEventListener('click', ()=>{
     const name = document.getElementById('bizName').value || 'Your business';
     const type = document.getElementById('bizType').value;
     const goal = document.getElementById('bizGoal').value;
     const budget = parseInt(document.getElementById('bizBudget').value,10);
-    const location = document.getElementById('bizLocation').value || 'local area';
-
-    // preview text
     const preview = `${name} — ${type}, goal: ${goal}, budget approx ₹${budget.toLocaleString()}`;
     document.getElementById('previewText').textContent = preview;
 
-    // decide platform mix (very simple mapping for demo)
+    // naive mix
     let metaPct=65, googlePct=25, waPct=10, platform='Meta (Instagram)';
     if(goal==='leads'){ metaPct=40; googlePct=50; waPct=10; platform='Google Search + Meta' }
     if(goal==='sales'){ metaPct=50; googlePct=40; waPct=10; platform='Meta + Google' }
     if(goal==='footfall'){ metaPct=80; googlePct=10; waPct=10; platform='Meta (Local)' }
-
-    // adjust by budget (mock scaling)
     if(budget >= 200000){ metaPct += 5; googlePct += 5; }
     if(budget <= 15000){ googlePct = Math.max(10, googlePct-10); metaPct = 100 - googlePct - waPct; }
 
-    // show strategy section
     document.getElementById('strategySection').classList.remove('hidden');
     document.getElementById('strategySection').scrollIntoView({behavior:'smooth'});
-
-    // populate
     document.getElementById('recPlatform').textContent = platform;
     document.getElementById('recBudgetLabel').textContent = `₹${budget.toLocaleString()}`;
     document.getElementById('segMeta').style.width = metaPct + '%';
     document.getElementById('segGoogle').style.width = googlePct + '%';
     document.getElementById('segWA').style.width = waPct + '%';
-    document.getElementById('audienceDemo').textContent = simpleAudienceText(type);
-    document.getElementById('whyChoice').textContent = simpleWhy(type,goal);
+    document.getElementById('audienceDemo').textContent = (type==='local'?'Age 20–45, local radius 5–10 km, interests: food & cafes': type==='coaching'?'Age 16–26, students, interests: exams':'Age 18–40, online buyers');
+    document.getElementById('whyChoice').textContent = (goal==='footfall'?'Local social formats drive nearby visits':'Search + Meta mix balances intent and reach');
     document.getElementById('confScore').textContent = Math.min(92, Math.round((metaPct+googlePct)/3)+50) + '%';
   });
 
-  // Back to Q
-  document.getElementById('btnBackToQ').addEventListener('click', ()=> document.getElementById('questionnaireSection').scrollIntoView({behavior:'smooth'}));
-  document.getElementById('btnOpenDesigner').addEventListener('click', ()=> {
+  // open designer
+  document.getElementById('btnOpenDesigner').addEventListener('click', ()=>{
+    document.getElementById('videoDesignerSection').classList.remove('hidden');
+    document.getElementById('videoDesignerSection').scrollIntoView({behavior:'smooth'});
+  });
+
+  // Designer -> Video Creator
+  document.getElementById('toVideoCreator').addEventListener('click', ()=>{
     document.getElementById('videoSection').classList.remove('hidden');
     document.getElementById('videoSection').scrollIntoView({behavior:'smooth'});
   });
 
-  // small helpers
-  function simpleAudienceText(type){
-    if(type==='local') return 'Age 20–45, local radius 5–10 km, interests: food & cafes';
-    if(type==='coaching') return 'Age 16–26, students, interests: exams & coaching';
-    if(type==='d2c') return 'Age 18–40, interested in fashion & beauty, online buyers';
-    if(type==='services') return 'Age 25–55, local professionals, intent-based searchers';
-    return 'Broad local audience with interest-based targeting';
-  }
-  function simpleWhy(type,goal){
-    if(goal==='footfall') return 'Local interest on Instagram and story offers drive nearby visits; social formats are highly engaging locally.';
-    if(goal==='leads') return 'Search captures high-intent queries; combine with Meta to build awareness.';
-    if(goal==='sales') return 'Mix of discovery + intent platforms balance scale and conversions.';
-    return 'Platform mix optimized for local reach and discovery.';
-  }
-
-  // Short Video Creator mock behavior
+  // Video generator
   const videoPreview = document.getElementById('videoPreview');
   const exportBtn = document.getElementById('btnExportVideo');
   const useBtn = document.getElementById('btnUseInCampaign');
 
   document.getElementById('btnGenerateVideo').addEventListener('click', ()=>{
     const tpl = document.getElementById('videoTemplate').value;
-    const cap = document.getElementById('videoCaption').value || 'Quick offer — check now!';
-    // fake generation time
     videoPreview.textContent = 'Rendering...';
     exportBtn.disabled = true; useBtn.disabled = true;
-    setTimeout(()=>{
-      videoPreview.textContent = (tpl==='fastPromo' ? '15s Promo — Mock Reel' : tpl==='storyTeller' ? '30s Story — Mock Reel' : '20s Product — Mock Reel');
-      exportBtn.disabled = false; useBtn.disabled = false;
-    },900);
+    setTimeout(()=>{ videoPreview.textContent = tpl==='fastPromo'?'15s Promo — Reel':'30s Story — Reel'; exportBtn.disabled = false; useBtn.disabled = false; },900);
   });
 
   document.getElementById('btnExportVideo').addEventListener('click', ()=> alert('Download MP4 (demo).'));
   document.getElementById('btnUseInCampaign').addEventListener('click', ()=> {
-    alert('Video added to your campaign (demo). Opening dashboard...');
     document.getElementById('dashboardSection').scrollIntoView({behavior:'smooth'});
-    // simulate improved metrics
-    document.getElementById('mImpr').textContent = '42,900';
-    document.getElementById('mClicks').textContent = '3,150';
-    document.getElementById('mLeads').textContent = '510';
-    document.getElementById('worked1').textContent = 'Generated reel lifted engagement by +18%';
+    document.getElementById('mImpr').textContent = '42,900'; document.getElementById('mClicks').textContent = '3,150'; document.getElementById('mLeads').textContent = '510';
+    // show scheduler and optimizer sections now that creative used
+    document.getElementById('schedulerSection').classList.remove('hidden');
+    document.getElementById('optimizeSection').classList.remove('hidden');
   });
 
-  // quick campaign actions
+  // Scheduler placeholders
+  document.getElementById('btnOpenDesigner')?.addEventListener('click', ()=> {
+    // intentionally left - same button earlier also triggers designer
+  });
+
+  // refresh
   document.getElementById('btnRefreshMetrics').addEventListener('click', ()=> {
-    // trivial "refresh" animation: increment values
     const impr = parseInt(document.getElementById('mImpr').textContent.replace(/,/g,''),10) || 38400;
     document.getElementById('mImpr').textContent = (impr + Math.round(Math.random()*2000)).toLocaleString();
     const clicks = parseInt(document.getElementById('mClicks').textContent.replace(/,/g,''),10) || 2560;
@@ -451,11 +539,25 @@
     alert('Metrics refreshed (demo).');
   });
 
-  // Login top (demo)
-  document.getElementById('loginTop').addEventListener('click', ()=> alert('Mock login — demo mode.'));
+  // top login (demo)
+  document.getElementById('loginTop').addEventListener('click', ()=> alert('Demo login (no-auth).'));
+
+  // Reset form
+  document.getElementById('btnResetQ').addEventListener('click', ()=>{
+    document.getElementById('bizName').value=''; document.getElementById('bizType').value='local'; document.getElementById('bizGoal').value='awareness';
+    document.getElementById('bizBudget').value='5000'; document.getElementById('bizLocation').value=''; document.getElementById('previewText').textContent='Fill the form to see a tailored plan.';
+  });
+
+  // ensure sections hidden initially as intended
+  document.getElementById('strategySection').classList.add('hidden');
+  document.getElementById('videoDesignerSection').classList.add('hidden');
+  document.getElementById('videoSection').classList.add('hidden');
+  document.getElementById('schedulerSection').classList.add('hidden');
+  document.getElementById('optimizeSection').classList.add('hidden');
 </script>
 </body>
 </html>
+
 
 
 
