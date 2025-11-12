@@ -309,10 +309,10 @@
       </div>
     </section>
 
-    <!-- Campaign Scheduler (new section) -->
-    <section id="schedulerSection" class="card mt hidden">
+    <!-- Campaign Scheduler: now positioned ABOVE the dashboard and visible -->
+    <section id="schedulerSection" class="card mt">
       <h3>Campaign Scheduler</h3>
-      <p class="mutedSmall">Auto-publish posts across channels, recommend best times, and keep brand presence consistent with a visual calendar.</p>
+      <p class="mutedSmall">Auto-publishes posts across channels. Smart timing recommendations. Visual calendar interface. Maintains consistent brand presence.</p>
 
       <div class="grid cols-2 mt">
         <div>
@@ -409,7 +409,7 @@
       </div>
     </section>
 
-    <!-- Optimize Your Campaign (new) -->
+    <!-- Campaign Improvement Engine (Optimize Your Campaign) BELOW the dashboard and visible -->
     <section id="optimizeSection" class="card mt">
       <h3>Optimize Your Campaign</h3>
       <p class="mutedSmall">AI-led optimization that finds problems and suggests fixes so you spend less time tuning and more time winning customers.</p>
@@ -426,7 +426,7 @@
         <div class="optCard card">
           <div class="optBadge">02</div>
           <div>
-            <div style="font-weight:800">Suggests fixes (audience / creative / budget)</div>
+            <div style="font-weight:800">Suggests fixes (audience/creative/budget)</div>
             <div class="mutedSmall" style="margin-top:6px">Actionable suggestions such as narrowing audience, swapping creatives, or reallocating budget to higher-performing channels.</div>
           </div>
         </div>
@@ -434,16 +434,16 @@
         <div class="optCard card">
           <div class="optBadge">03</div>
           <div>
-            <div style="font-weight:800">Low effort — AI-led optimization</div>
-            <div class="mutedSmall" style="margin-top:6px">Apply suggestions with one click and monitor changes over time.</div>
+            <div style="font-weight:800">Improves ROI continuously</div>
+            <div class="mutedSmall" style="margin-top:6px">Optimization loops that learn from results and progressively increase campaign efficiency.</div>
           </div>
         </div>
 
         <div class="optCard card">
           <div class="optBadge">04</div>
           <div>
-            <div style="font-weight:800">Improves ROI continuously</div>
-            <div class="mutedSmall" style="margin-top:6px">Optimization loops that learn from results and progressively increase campaign efficiency.</div>
+            <div style="font-weight:800">Low effort — AI-led optimization</div>
+            <div class="mutedSmall" style="margin-top:6px">Apply suggestions with one click and monitor changes over time.</div>
           </div>
         </div>
       </div>
@@ -518,14 +518,6 @@
   document.getElementById('btnUseInCampaign').addEventListener('click', ()=> {
     document.getElementById('dashboardSection').scrollIntoView({behavior:'smooth'});
     document.getElementById('mImpr').textContent = '42,900'; document.getElementById('mClicks').textContent = '3,150'; document.getElementById('mLeads').textContent = '510';
-    // show scheduler and optimizer sections now that creative used
-    document.getElementById('schedulerSection').classList.remove('hidden');
-    document.getElementById('optimizeSection').classList.remove('hidden');
-  });
-
-  // Scheduler placeholders
-  document.getElementById('btnOpenDesigner')?.addEventListener('click', ()=> {
-    // intentionally left - same button earlier also triggers designer
   });
 
   // refresh
@@ -548,17 +540,11 @@
     document.getElementById('bizBudget').value='5000'; document.getElementById('bizLocation').value=''; document.getElementById('previewText').textContent='Fill the form to see a tailored plan.';
   });
 
-  // ensure sections hidden initially as intended
+  // ensure sections visibility (scheduler and optimize visible by default)
   document.getElementById('strategySection').classList.add('hidden');
   document.getElementById('videoDesignerSection').classList.add('hidden');
   document.getElementById('videoSection').classList.add('hidden');
-  document.getElementById('schedulerSection').classList.add('hidden');
-  document.getElementById('optimizeSection').classList.add('hidden');
+  // schedulerSection and optimizeSection intentionally visible above/below dashboard
 </script>
 </body>
 </html>
-
-
-
-
-
